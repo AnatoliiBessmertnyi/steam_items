@@ -1,15 +1,19 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>{{ item.name }}</h1>
+  <h1 class="deal-title">{{ item.name }}</h1>
   {% for addition in additions %}
-    <div>
-      <h2>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h2>
-      <p>Количество: {{ addition.quantity }}</p>
-      <p>Цена за штуку: {{ addition.price_per_item }}</p>
-      <p>Комиссия: {{ addition.commission }}%</p>
-      <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
-      <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
+    <div class="deal">
+      <h2 class="deal-name">{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h2>
+      <div class="deal-details">
+        <p>Количество: {{ addition.quantity }}</p>
+        <p>Цена за штуку: {{ addition.price_per_item }}</p>
+        <p>Комиссия: {{ addition.commission }}%</p>
+      </div>
+      <div class="deal-change">
+        <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
+        <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
+      </div>
     </div>
   {% endfor %}
 {% endblock %}

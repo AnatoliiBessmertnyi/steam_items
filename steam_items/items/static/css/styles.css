@@ -7,11 +7,7 @@ body {
     padding-left: 0;
 }
 
-/* Названия предметов */
-a {
-    color: #66c0f4;
-    text-decoration: none;
-}
+
 
 /* Шапка */
 .container {
@@ -218,3 +214,57 @@ form button {
     border-radius: 5px;
 }
 
+/* Детали сделок */
+.deal {
+    position: relative;
+    background: linear-gradient(to left, #1B2838, #16202D);
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    width: 40%;
+    margin-top: 15px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.deal:before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
+    background: linear-gradient(to right, #1B2838, #16202D);
+    z-index: -1;
+    border-radius: 5px;
+}
+
+.deal-name {
+    color: #c6d4df;
+    font-family: Arial, sans-serif;
+}
+
+/* Кнопки редактирования в деталях сделок */
+.deal-change {
+    display: flex;
+    justify-content: space-between;
+}
+
+.deal-change a {
+    border: 2px solid #1C2D3A;
+    padding: 5px;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+.deal-change a:hover {
+    border-color: #2A3F5F;
+    box-shadow: 0 0 5px #2A3F5F;
+}
+
+/* Изменение предметов */
+a {
+    color: #1a9fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 2px;
+}
