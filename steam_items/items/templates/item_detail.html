@@ -10,7 +10,7 @@
         <p>Цена за штуку: {{ addition.price_per_item }}</p>
         <p>Комиссия: {{ addition.commission }}%</p>
       </div>
-      <div class="deal-change">
+      <div class="deal-change-details">
         <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
         <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
       </div>
