@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>{{ item.name }}</h1>
+  {% for addition in additions %}
+    <div>
+      <h2>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y" }}</h2>
+      <p>Количество: {{ addition.quantity }}</p>
+      <p>Цена за штуку: {{ addition.price_per_item }}</p>
+      <p>Комиссия: {{ addition.commission }}%</p>
+      <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
+      <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
+    </div>
+  {% endfor %}
+{% endblock %}

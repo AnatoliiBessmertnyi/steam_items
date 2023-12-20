@@ -1,0 +1,4 @@
+djangorestframework
+Django
+django-filter
+Pillow

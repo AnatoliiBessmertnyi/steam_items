@@ -1,0 +1,32 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Архивированные сделки</h1>
+  {% regroup additions by item.name as additions_by_item %}
+  {% for item in additions_by_item %}
+    <h2 onclick="toggleAdditions('{{ item.list.0.item.id }}')">{{ item.grouper }} ({{ item.list|length }})</h2>
+    <div id="item{{ item.list.0.item.id }}" style="display: none;">
+      {% for addition in item.list %}
+        <div>
+          <h3>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h3>
+          <p>Количество: {{ addition.quantity }}</p>
+          <p>Цена за штуку: {{ addition.price_per_item }}</p>
+          <a href="{% url 'unarchive_addition' addition.id %}">Восстановить</a>
+          <a href="{% url 'delete_addition' addition.id %}" onclick="return confirm('Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.')">Удалить</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <script>
+  function toggleAdditions(itemId) {
+    var additionsDiv = document.getElementById("item" + itemId);
+    if (additionsDiv.style.display === "none") {
+      additionsDiv.style.display = "block";
+    } else {
+      additionsDiv.style.display = "none";
+    }
+  }
+  </script>
+
+{% endblock %}

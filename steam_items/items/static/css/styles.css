@@ -1,0 +1,149 @@
+/* Общий стиль */
+body {
+    background-color: #1B2838;
+    color: #c6d4df;
+    font-family: Arial, sans-serif;
+    padding-right: 20px;
+    padding-left: 0;
+}
+
+/* Названия предметов */
+a {
+    color: #66c0f4;
+    text-decoration: none;
+}
+
+/* Шапка */
+.container {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.header {
+    background-color: #171D25;
+    color: #C5C3C0;
+    height: 60px;
+    padding-left: 20px;
+    padding: 25px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+}
+
+.header img {
+    width: 80px;
+}
+
+.header .site-name span {
+    font-weight: bold;
+    font-size: 30px;
+    padding-left: 20px;
+}
+
+.header a {
+    color: inherit;
+}
+
+.header nav {
+    margin-left: auto;
+    margin-right: 65px;  
+}
+
+.header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.header nav ul li a {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.header nav ul li.active a {
+    color: #1a9fff;
+    border-bottom: 3px solid #1a9fff;
+    padding-bottom: 5px;
+}
+
+/* Наименование раздела */
+h1 {
+    background: radial-gradient(circle at center, #6A8A48, #46602A);
+    color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+    margin-top: 0px;
+    margin: 0 calc(-50vw + 50%);
+    width: 100vw;
+}
+
+.card {
+    background-color: #2a475e;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.main-content {
+    margin-left: 20px;
+    background-color: #1b2838;
+}
+
+.page-container {
+    padding-top: 100px;
+}
+
+/* Стили предметов в инвентаре */
+.inventory-item {
+    background-color: #16202D;
+    border-radius: 6px;
+    padding: 1px 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Подвал */
+.footer {
+    background-color: #1b2838;
+    color: #808080;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer h2 {
+    line-height: 1;
+    margin-bottom: -10px;
+}
+
+.footer p {
+    line-height: 1;
+}
+
+/* Размер и расположение лого */
+.footer img {
+    width: 50px;
+    margin-right: 10px;
+}
+

@@ -1,0 +1,24 @@
+{% load static %}
+<div class="header">
+  <div class="container">
+    <div class="logo">
+      <a href="{% url 'index' %}">
+        <img src="{% static 'images/logo2.png' %}" class="d-inline-block align-top" alt="Logo">
+      </a>
+    </div>
+    <div class="site-name">
+      <a href="{% url 'index' %}">
+        <span>Steam Items</span>
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}"><a href="{% url 'index' %}">Главная</a></li>
+        <li class="{% if request.resolver_match.url_name == 'add_item' %}active{% endif %}"><a href="{% url 'add_item' %}">Добавить сделку</a></li>
+        <li class="{% if request.resolver_match.url_name == 'create_item' %}active{% endif %}"><a href="{% url 'create_item' %}">Создать предмет</a></li>
+        <li class="{% if request.resolver_match.url_name == 'archived_additions' %}active{% endif %}"><a href="{% url 'archived_additions' %}">Архив</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
