@@ -10,7 +10,6 @@ class ItemAdditionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ItemAdditionForm, self).__init__(*args, **kwargs)
         self.fields['quantity'].initial = 1
-        self.fields['price_per_item'].initial = 1
 
     def clean(self):
         cleaned_data = super().clean()

@@ -4,7 +4,14 @@
   {% for item in items %}
     <div class="inventory-item"> 
       <div class="item-left">
-        <h2><a href="{% url 'item_detail' item.id %}">{{ item.name }}</a></h2>
+        <a href="{% url 'item_detail' item.id %}">
+          <div style="display: flex; align-items: center;">
+            {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 50px; height: 50px; margin-right: 10px;">
+            {% endif %}
+            <h2>{{ item.name }}</h2>
+          </div>
+        </a>
       </div>
       <div class="item-right">
         <div class="item-part">

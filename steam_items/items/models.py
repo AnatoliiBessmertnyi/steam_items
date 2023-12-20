@@ -6,7 +6,7 @@ class Item(models.Model):
     quantity = models.IntegerField(default=0)
     total_price = models.FloatField(default=0.0)
     link = models.URLField(blank=True, null=True)
-    image = models.URLField(blank=True, null=True)
+    image = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -33,8 +33,6 @@ class ItemAddition(models.Model):
     price_per_item = models.FloatField(verbose_name='Цена за единицу')
     commission = models.IntegerField(default=13, verbose_name='% Комиссии')
     total = models.FloatField(default=0.0)
-    link = models.URLField(blank=True, null=True)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
 

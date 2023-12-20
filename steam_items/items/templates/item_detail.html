@@ -4,7 +4,7 @@
   <h1>{{ item.name }}</h1>
   {% for addition in additions %}
     <div>
-      <h2>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y" }}</h2>
+      <h2>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h2>
       <p>Количество: {{ addition.quantity }}</p>
       <p>Цена за штуку: {{ addition.price_per_item }}</p>
       <p>Комиссия: {{ addition.commission }}%</p>
