@@ -3,9 +3,19 @@
   <h1>Инвентарь</h1>
   {% for item in items %}
     <div class="inventory-item"> 
-      <h2><a href="{% url 'item_detail' item.id %}">{{ item.name }}</a></h2>
-      <p>Общее количество: {{ item.quantity }}</p>
-      <p>Средняя цена: {{ item.average_price }}</p>
+      <div class="item-left">
+        <h2><a href="{% url 'item_detail' item.id %}">{{ item.name }}</a></h2>
+      </div>
+      <div class="item-right">
+        <div class="item-part">
+            <span class="item-label">Общее количество:</span>
+            <span class="item-value">{{ item.quantity }}</span>
+        </div>
+        <div class="item-part">
+            <span class="item-label">Средняя цена:</span>
+            <span class="item-value">{{ item.average_price }}</span>
+        </div>
+    </div>
     </div>
   {% endfor %}
 {% endblock %}

@@ -109,8 +109,64 @@ h1 {
     font-size: 0.9em;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    justify-content: space-between;
+}
+
+.item-left a {
+    color: inherit;
+}
+
+.item-right {
+    display: flex;
+    flex-direction: row;
     justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.item-value {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+form {
+    display: flex;
+    margin-top: 15px;
+    flex-direction: column;
+    gap: 15px;
+    
+}
+
+.form-field {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+form input, form select {
+    background-color: #1C2D3A;
+    border: 1px solid black;
+    border-radius: 5px; 
+    color: #c6d4df;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 0.9em;
+    width: 10%;
+}
+
+form label {
+    font-weight: bold;
+    width: 20%;
+}
+
+form button {
+    background-color: #1C2D3A;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #c6d4df;
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 15%;
 }
 
 /* Подвал */
