@@ -4,15 +4,32 @@
   <h1>Архивированные сделки</h1>
   {% regroup additions by item.name as additions_by_item %}
   {% for item in additions_by_item %}
-    <h2 onclick="toggleAdditions('{{ item.list.0.item.id }}')">{{ item.grouper }} ({{ item.list|length }})</h2>
+    <h2 onclick="toggleAdditions('{{ item.list.0.item.id }}')">
+      <div style="display: flex; align-items: center;">
+        {% if item.list.0.item.image %}
+            <img src="{{ item.list.0.item.image }}" alt="{{ item.list.0.item.name }}" style="width: 50px; height: 50px; margin-right: 10px;">
+        {% endif %}
+        {{ item.grouper }} (<span style="font-size: 0.9em; margin-left: 2px; margin-right: 2px;">Кол-во: {{ item.list|length }} </span>)
+      </div>
+    </h2>
     <div id="item{{ item.list.0.item.id }}" style="display: none;">
       {% for addition in item.list %}
-        <div>
-          <h3>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h3>
-          <p>Количество: {{ addition.quantity }}</p>
-          <p>Цена за штуку: {{ addition.price_per_item }}</p>
-          <a href="{% url 'unarchive_addition' addition.id %}">Восстановить</a>
-          <a href="{% url 'delete_addition' addition.id %}" onclick="return confirm('Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.')">Удалить</a>
+        <div class="inventory-item">
+          <div class="item-left">
+            <h3>{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h3>
+          </div>
+          <div class="item-right">
+            <div class="item-part">
+              <span class="item-label">Количество:</span>
+              <span class="item-value">{{ addition.quantity }}</span>
+            </div>
+            <div class="item-part">
+              <span class="item-label">Цена за штуку:</span>
+              <span class="item-value">{{ addition.price_per_item }}</span>
+            </div>
+            <a href="{% url 'unarchive_addition' addition.id %}">Восстановить</a>
+            <a href="{% url 'delete_addition' addition.id %}" onclick="return confirm('Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.')">Удалить</a>
+          </div>
         </div>
       {% endfor %}
     </div>

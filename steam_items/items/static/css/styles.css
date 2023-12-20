@@ -210,3 +210,11 @@ form button {
     margin-right: 10px;
 }
 
+/* Название предмета в архиве */
+h2 {
+    background: linear-gradient(to left, #1B2838, #171D25);  /* Градиент фона */
+    color: #ffffff;  /* Цвет текста */
+    padding: 10px;  /* Отступ вокруг текста */
+    border-radius: 5px;  /* Скругление углов */
+}
+
