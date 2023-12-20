@@ -36,6 +36,9 @@ class ItemAddition(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-date']
+
     def save(self, *args, **kwargs):
         old_archived = ItemAddition.objects.get(id=self.id).archived if self.id else None
         super().save(*args, **kwargs)

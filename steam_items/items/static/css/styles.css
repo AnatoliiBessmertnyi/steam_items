@@ -248,7 +248,14 @@ form button {
     font-family: Arial, sans-serif;
 }
 
-/* Кнопки редактирования в деталях сделок */
+.deal-details {
+    color: #c6d4df;
+    font-family: Arial, sans-serif;
+}
+
+
+
+/* Кнопки редактирования в деталях сделки */
 .deal-change-details {
     display: flex;
     justify-content: space-between;
@@ -267,6 +274,7 @@ form button {
     box-shadow: 0 0 10px #2A3F5F;
 }
 
+/* Кнопки редактирования сделок в архиве */
 .deal-change-archived {
     border: 2px solid #1C2D3A;
     padding: 5px;
@@ -278,6 +286,4 @@ form button {
     border-color: #2A3F5F;
     box-shadow: 0 0 10px #2A3F5F;
 }
-
-/* Изменение предметов */
 

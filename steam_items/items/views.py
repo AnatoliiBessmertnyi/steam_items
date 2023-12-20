@@ -17,7 +17,7 @@ class IndexView(ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return Item.objects.filter(quantity__gt=0)
+        return Item.objects.filter(quantity__gt=0).order_by('name')
 
 
 class ItemDetailView(DetailView):
@@ -51,12 +51,18 @@ class EditAdditionView(UpdateView):
 
 
 class CreateItemView(CreateView):
+    '''Создание нового предмета.'''
     model = Item
     form_class = ItemForm
     template_name = 'create_item.html'
 
     def form_valid(self, form):
-        form.save()
+        item = form.save(commit=False)
+        if not item.link:
+            item.link = 'https://steamcommunity.com/market/'  # Замените на вашу ссылку по умолчанию
+        if not item.image:
+            item.image = 'static/images/broken_image.png'  # Замените на путь к вашему изображению
+        item.save()
         return redirect('index')
     
 
