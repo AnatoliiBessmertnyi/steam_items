@@ -2,18 +2,20 @@
 
 {% block content %}
   <h1 class="deal-title">{{ item.name }}</h1>
-  {% for addition in additions %}
-    <div class="deal">
-      <h2 class="deal-name">{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h2>
-      <div class="deal-details">
-        <p><span class="item-label">Количество:</span> <span class="item-value">{{ addition.quantity }}</span></p>
-        <p><span class="item-label">Цена за штуку:</span> <span class="item-value">{{ addition.price_per_item }}</span></p>
-        <p><span class="item-label">Комиссия:</span> <span class="item-value">{{ addition.commission }}%</span></p>
+  <div class="deal-container">
+    {% for addition in additions %}
+      <div class="deal">
+        <h2 class="deal-name">{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i" }}</h2>
+        <div class="deal-details">
+          <p><span class="item-label">Количество:</span> <span class="item-value">{{ addition.quantity }}</span></p>
+          <p><span class="item-label">Цена за штуку:</span> <span class="item-value">{{ addition.price_per_item }}</span></p>
+          <p><span class="item-label">Комиссия:</span> <span class="item-value">{{ addition.commission }}%</span></p>
+        </div>
+        <div class="deal-change-details">
+          <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
+          <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
+        </div>
       </div>
-      <div class="deal-change-details">
-        <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
-        <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
-      </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 {% endblock %}

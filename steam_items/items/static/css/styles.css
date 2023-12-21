@@ -5,6 +5,8 @@ body {
     font-family: Arial, sans-serif;
     padding-right: 20px;
     padding-left: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 a {
@@ -182,8 +184,7 @@ form button {
     background-color: #1b2838;
     color: #808080;
     padding: 10px 0;
-    position: fixed;
-    bottom: 0;
+    position: static;
     width: 100%;
     display: flex;
     align-items: center;
@@ -220,16 +221,27 @@ form button {
 }
 
 /* Детали сделок */
+
+.deal-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+  
 .deal {
+    box-sizing: border-box;
     position: relative;
     background: linear-gradient(to left, #1B2838, #16202D);
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
-    width: 40%;
-    margin-top: 15px;
+    width: calc(50% - 10px);
+    height: calc(100% * 0.6);
+    margin-top: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    flex-basis: calc(50% - 10px);
 }
+
 
 .deal:before {
     content: "";
@@ -246,11 +258,17 @@ form button {
 .deal-name {
     color: #c6d4df;
     font-family: Arial, sans-serif;
+    margin-top: 5px;
+    margin-bottom: 13px;
 }
 
 .deal-details {
     color: #c6d4df;
     font-family: Arial, sans-serif;
+}
+
+.deal-details p {
+    margin: 10px 0; /* Уменьшаем верхний и нижний отступы */
 }
 
 
