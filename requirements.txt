@@ -2,3 +2,5 @@ djangorestframework
 Django
 django-filter
 Pillow
+requests
+beautifulsoup4

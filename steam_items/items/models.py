@@ -33,7 +33,7 @@ class ItemAddition(models.Model):
     price_per_item = models.FloatField(verbose_name='Цена за единицу')
     commission = models.IntegerField(default=13, verbose_name='% Комиссии')
     total = models.FloatField(default=0.0)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
     archived = models.BooleanField(default=False)
 
     class Meta:

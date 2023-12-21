@@ -1,15 +1,28 @@
 from django import forms
+from django.utils import timezone
+
 from .models import Item, ItemAddition
 
 
+
 class ItemAdditionForm(forms.ModelForm):
+    date = forms.DateTimeField(
+        input_formats=['%d.%m.%Y %H:%M'],
+        widget=forms.DateTimeInput(format='%d.%m.%Y %H:%M'),
+        required=False,
+        label='Дата и время',
+    )
+
     class Meta:
         model = ItemAddition
-        fields = ['item', 'transaction_type', 'quantity', 'price_per_item', 'commission']
+        fields = ['item', 'transaction_type', 'quantity', 'price_per_item',
+                  'commission', 'date']
 
     def __init__(self, *args, **kwargs):
         super(ItemAdditionForm, self).__init__(*args, **kwargs)
         self.fields['quantity'].initial = 1
+        if not self.instance.pk:
+            self.initial['date'] = timezone.now()
 
     def clean(self):
         cleaned_data = super().clean()
