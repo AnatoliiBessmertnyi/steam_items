@@ -23,12 +23,13 @@ class IndexView(ListView):
         context = super().get_context_data(**kwargs)
         items = self.get_queryset()
         total_quantity = sum(item.quantity for item in items)
-        total_price = sum(item.total_price for item in items)
+        total_price = sum(item.average_price() * item.quantity for item in items)
         average_price = total_price / total_quantity if total_quantity else 0
         context['total_quantity'] = total_quantity
         context['total_price'] = total_price
         context['average_price'] = average_price
         return context
+
 
 
 
