@@ -8,6 +8,9 @@ class Item(models.Model):
     link = models.URLField(blank=True, null=True)
     image = models.TextField(blank=True, null=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 

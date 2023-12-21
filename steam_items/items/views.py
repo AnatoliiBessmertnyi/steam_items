@@ -17,7 +17,19 @@ class IndexView(ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return Item.objects.filter(quantity__gt=0).order_by('name')
+        return Item.objects.filter(quantity__gt=0)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        items = self.get_queryset()
+        total_quantity = sum(item.quantity for item in items)
+        total_price = sum(item.total_price for item in items)
+        average_price = total_price / total_quantity if total_quantity else 0
+        context['total_quantity'] = total_quantity
+        context['total_price'] = total_price
+        context['average_price'] = average_price
+        return context
+
 
 
 class ItemDetailView(DetailView):

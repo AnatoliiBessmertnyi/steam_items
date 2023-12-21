@@ -1,6 +1,26 @@
 {% extends "base_generic.html" %}
 {% block content %}
   <h1>Инвентарь</h1>
+  <div class="inventory-item">
+    <div class="item-left">
+      <h2>Общая информация</h2>
+    </div>
+    <div class="item-right">
+      <div class="item-part">
+        <span class="item-label">Общее количество:</span>
+        <span class="item-value">{{ total_quantity }}</span>
+      </div>
+      <div class="item-part">
+        <span class="item-label">Средняя цена:</span>
+        <span class="item-value">{{ average_price|floatformat:2 }}</span>
+      </div>
+      <div class="item-part">
+        <span class="item-label">Общая стоимость:</span>
+        <span class="item-value">{{ total_price|floatformat:2 }}</span>
+      </div>
+    </div>
+  </div>
+
   {% for item in items %}
     <div class="inventory-item"> 
       <div class="item-left">
