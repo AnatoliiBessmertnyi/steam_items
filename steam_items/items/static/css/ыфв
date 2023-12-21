@@ -1,0 +1,29 @@
+.page-container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    margin-left: 20px;
+    background-color: #1b2838;
+    flex-grow: 1; /* Добавьте это */
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #1B2838;
+    color: #c6d4df;
+    font-family: Arial, sans-serif;
+    padding-right: 20px;
+    padding-left: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.footer-container {
+    height: 60px; /* Высота подвала */
+}

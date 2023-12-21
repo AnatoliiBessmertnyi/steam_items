@@ -1,30 +1,33 @@
-.footer {
+.footer-container {
     background-color: #1b2838;
     color: #808080;
-    padding: 10px 0;
+    padding: 2px 0;
     position: static;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: auto;
 }
 
-.footer div {
+
+.footer-container .footer-text {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
-.footer h2 {
+.footer-container h2 {
     line-height: 1;
     margin-bottom: -10px;
 }
 
-.footer p {
+.footer-container p {
     line-height: 1;
 }
 
-.footer img {
-    width: 50px;
+.footer-container img {
+    width: 45px;
     margin-right: 10px;
 }

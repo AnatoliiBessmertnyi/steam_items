@@ -1,6 +1,5 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
 <head>
   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/header.css' %}">
@@ -14,7 +13,8 @@
     <main class="main-content">
       {% block content %}{% endblock %}
     </main>
-    {% include 'footer.html' %}
+    <div class="footer-container">
+      {% include 'footer.html' %}
+    </div>
   </div>
 </body>
-</html>
