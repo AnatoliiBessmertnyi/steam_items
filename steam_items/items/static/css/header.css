@@ -1,0 +1,49 @@
+.header {
+    background-color: #171D25;
+    color: #C5C3C0;
+    height: 60px;
+    padding-left: 20px;
+    padding: 25px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+}
+
+.header img {
+    width: 80px;
+}
+
+.header .site-name span {
+    font-weight: bold;
+    font-size: 30px;
+    padding-left: 20px;
+}
+
+.header a {
+    color: inherit;
+}
+
+.header nav {
+    margin-left: auto;
+    margin-right: 65px;  
+}
+
+.header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.header nav ul li a {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.header nav ul li.active a {
+    color: #1a9fff;
+    border-bottom: 3px solid #1a9fff;
+    padding-bottom: 5px;
+}

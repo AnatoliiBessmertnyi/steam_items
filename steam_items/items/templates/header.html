@@ -1,5 +1,5 @@
 {% load static %}
-<div class="header">
+<div id="header" class="header">
   <div class="container">
     <div class="logo">
       <a href="{% url 'index' %}">
@@ -22,3 +22,15 @@
   </div>
 </div>
 
+<script>
+  var prevScrollpos = window.pageYOffset;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    if (prevScrollpos > currentScrollPos) {
+      document.getElementById("header").style.position = "fixed";
+    } else {
+      document.getElementById("header").style.position = "absolute";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>

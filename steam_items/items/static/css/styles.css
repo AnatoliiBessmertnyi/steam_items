@@ -25,56 +25,6 @@ a {
     padding-left: 20px;
 }
 
-.header {
-    background-color: #171D25;
-    color: #C5C3C0;
-    height: 60px;
-    padding-left: 20px;
-    padding: 25px 0;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-}
-
-.header img {
-    width: 80px;
-}
-
-.header .site-name span {
-    font-weight: bold;
-    font-size: 30px;
-    padding-left: 20px;
-}
-
-.header a {
-    color: inherit;
-}
-
-.header nav {
-    margin-left: auto;
-    margin-right: 65px;  
-}
-
-.header nav ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-}
-
-.header nav ul li a {
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.header nav ul li.active a {
-    color: #1a9fff;
-    border-bottom: 3px solid #1a9fff;
-    padding-bottom: 5px;
-}
-
 /* Наименование раздела */
 h1 {
     background: radial-gradient(circle at center, #6A8A48, #46602A);
@@ -177,39 +127,6 @@ form button {
     font-size: 1.2em;
     font-weight: bold;
     width: 15%;
-}
-
-/* Подвал */
-.footer {
-    background-color: #1b2838;
-    color: #808080;
-    padding: 10px 0;
-    position: static;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.footer div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.footer h2 {
-    line-height: 1;
-    margin-bottom: -10px;
-}
-
-.footer p {
-    line-height: 1;
-}
-
-/* Размер и расположение лого */
-.footer img {
-    width: 50px;
-    margin-right: 10px;
 }
 
 /* Название предмета в архиве */
