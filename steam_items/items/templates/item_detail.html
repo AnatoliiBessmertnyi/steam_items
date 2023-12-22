@@ -1,7 +1,12 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1 class="deal-title">{{ item.name }}</h1>
+  <div class="deal-title">
+    <h1>{{ item.name }}</h1>
+  </div>
+  <div class="button-wrapper">
+    <a href="{% url 'add_item' item.id %}" class="add-deal-button">Добавить сделку по данному предмету</a>
+  </div>
   <div class="deal-container">
     {% for addition in additions %}
       <div class="deal">

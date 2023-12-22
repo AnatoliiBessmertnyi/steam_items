@@ -24,6 +24,7 @@ def save_current_price(request):
     item.save()
     return JsonResponse({'status': 'ok'})
 
+
 class IndexView(ListView):
     """
     Отображает список всех предметов, которые имеют неархивированные
@@ -65,8 +66,6 @@ class IndexView(ListView):
         return context
 
 
-
-
 class ItemDetailView(DetailView):
     model = Item
     template_name = 'item_detail.html'
@@ -78,12 +77,20 @@ class ItemDetailView(DetailView):
         return context
 
 
+
+
 class AddItemView(CreateView):
+    """
+    Представление для добавления новой сделки по предмету.
+    """
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'add_item.html'
 
     def form_valid(self, form):
+        """
+        Переопределенный метод form_valid для обработки валидной формы.
+        """
         addition = form.save()
         item = addition.item
         if addition.transaction_type == 'BUY':
@@ -93,7 +100,16 @@ class AddItemView(CreateView):
             item.quantity -= addition.quantity
             item.total_price -= addition.quantity * addition.price_per_item
         item.save()
-        return redirect('index')
+        return redirect(reverse('item_detail', args=[item.id]))
+    
+    def get_form_kwargs(self):
+        """
+        Переопределенный метод get_form_kwargs для передачи item_id в форму.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs['item_id'] = self.kwargs.get('item_id')
+        return kwargs
+
 
 
 class EditAdditionView(UpdateView):

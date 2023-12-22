@@ -89,22 +89,22 @@ h1 {
     font-weight: bold;
 }
 
-input[type="number"] {
-    width: 45px;
+.item-right input[type="number"] {
+    width: 58px;
     font-family: Arial, sans-serif;
-    font-size: 1.1em;  /* Увеличивает размер шрифта */
-    font-weight: bold;  /* Делает шрифт жирным */
-    appearance: none;  /* Стандартное свойство */
-    -webkit-appearance: none;  /* Для Chrome и Safari */
-    -moz-appearance: textfield;  /* Для Firefox */
+    font-size: 1.1em;
+    font-weight: bold;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
     background-color: #16202D;
     border-radius: 5px;
     color: #c6d4df;
-    border: 1px solid #1B2838;  /* Добавляет тонкую рамку темнее, чем цвет фона */
-    box-shadow: 0px 0px 5px #0A1722;
+    border: 2px solid #1B2838;
+    box-shadow: 1px 0px 5px #1B2838;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
+.item-right input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
@@ -166,6 +166,23 @@ form button {
 }
 
 /* Детали сделок */
+.add-deal-button {
+    background: linear-gradient(to left, #1B2838, #16202D);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.add-deal-button:hover {
+    border-color: #2A3F5F;
+    box-shadow: 0 0 10px #2A3F5F;
+}
+
+.button-wrapper {
+    margin-top: 17px; 
+}
+
 
 .deal-container {
     display: flex;

@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('item/<int:pk>/', views.ItemDetailView.as_view(), name='item_detail'),
     path('add_item/', views.AddItemView.as_view(), name='add_item'),
+    path('add_item/<int:item_id>/', views.AddItemView.as_view(), name='add_item'),
     path('create_item/', views.CreateItemView.as_view(), name='create_item'),
     path('edit_addition/<int:pk>/', views.EditAdditionView.as_view(),
          name='edit_addition'),
