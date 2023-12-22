@@ -1,8 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from .models import Item, ItemAddition
-
 
 
 class ItemAdditionForm(forms.ModelForm):
@@ -45,6 +45,12 @@ class ItemAdditionForm(forms.ModelForm):
         if price_per_item <= 0:
             raise forms.ValidationError('Цена должна быть больше 0.')
         return price_per_item
+    
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if not date:
+            raise ValidationError('Дата и время обязательны.')
+        return date
 
 
 class ItemForm(forms.ModelForm):
