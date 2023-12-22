@@ -8,6 +8,7 @@ from django.views.generic import DeleteView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.http import HttpResponseBadRequest
 
 from .models import Item, ItemAddition
 from .forms import ItemForm, ItemAdditionForm
@@ -100,7 +101,12 @@ class AddItemView(CreateView):
             item.quantity -= addition.quantity
             item.total_price -= addition.quantity * addition.price_per_item
         item.save()
+
+        if item.quantity == 0:
+            ItemAddition.objects.filter(item=item).update(archived=True)
+
         return redirect(reverse('item_detail', args=[item.id]))
+    
     
     def get_form_kwargs(self):
         """
@@ -171,7 +177,20 @@ class CreateItemView(CreateView):
         return redirect('index')
     
 
-class DeleteAdditionView(DeleteView):
+class ItemUpdateMixin:
+    """Миксин для обновления предмета на основе сделки."""
+    def update_item(self, addition, item, reverse=False):
+        """Обновляет предмет на основе типа сделки."""
+        if addition.transaction_type == 'BUY':
+            item.quantity -= addition.quantity if reverse else addition.quantity
+            item.total_price -= addition.quantity * addition.price_per_item if reverse else addition.quantity * addition.price_per_item
+        else:
+            item.quantity += addition.quantity if reverse else addition.quantity
+            item.total_price += addition.quantity * addition.price_per_item if reverse else addition.quantity * addition.price_per_item
+        item.save()
+
+class DeleteAdditionView(ItemUpdateMixin, DeleteView):
+    """Обрабатывает удаление существующих сделок."""
     model = ItemAddition
     success_url = reverse_lazy('archived_additions')
 
@@ -179,32 +198,23 @@ class DeleteAdditionView(DeleteView):
         return self.delete(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """Удаляет сделку и обновляет предмет."""
         addition = self.get_object()
         item = addition.item
-        if addition.transaction_type == 'BUY':
-            item.quantity -= addition.quantity
-            item.total_price -= addition.quantity * addition.price_per_item
-        else:
-            item.quantity += addition.quantity
-            item.total_price += addition.quantity * addition.price_per_item
-        item.save()
+        self.update_item(addition, item, reverse=True)
         return super().delete(*args, **kwargs)
 
-
-class ArchiveAdditionView(RedirectView):
+class ArchiveAdditionView(ItemUpdateMixin, RedirectView):
+    """Обрабатывает архивирование существующих сделок."""
     def get_redirect_url(self, *args, **kwargs):
+        """Архивирует сделку, обновляет предмет и возвращает URL."""
         addition = ItemAddition.objects.get(id=kwargs['pk'])
         addition.archived = True
         addition.save()
         item = addition.item
-        if addition.transaction_type == 'BUY':
-            item.quantity -= addition.quantity
-            item.total_price -= addition.quantity * addition.price_per_item
-        else:
-            item.quantity += addition.quantity
-            item.total_price += addition.quantity * addition.price_per_item
-        item.save()
+        self.update_item(addition, item)
         return reverse('item_detail', kwargs={'pk': addition.item.pk})
+
     
 
 class ArchivedAdditionsView(ListView):
@@ -217,11 +227,16 @@ class ArchivedAdditionsView(ListView):
 
 
 class UnarchiveAdditionView(RedirectView):
+    """Представление для восстановления архивированных сделок."""
     def get_redirect_url(self, *args, **kwargs):
+        """Восстанавливает сделку, обновляет предмет и возвращает URL."""
         addition = ItemAddition.objects.get(id=kwargs['pk'])
+        item = addition.item
+        if addition.transaction_type == 'SELL' and item.quantity < 1:
+            return reverse('archived_additions')
         addition.archived = False
         addition.save()
-        item = addition.item
+
         if addition.transaction_type == 'BUY':
             item.quantity += addition.quantity
             item.total_price += addition.quantity * addition.price_per_item
@@ -229,4 +244,8 @@ class UnarchiveAdditionView(RedirectView):
             item.quantity -= addition.quantity
             item.total_price -= addition.quantity * addition.price_per_item
         item.save()
+
+        if item.quantity == 0:
+            ItemAddition.objects.filter(item=item).update(archived=True)
         return reverse('archived_additions')
+
