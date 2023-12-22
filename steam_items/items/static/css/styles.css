@@ -89,6 +89,27 @@ h1 {
     font-weight: bold;
 }
 
+input[type="number"] {
+    width: 45px;
+    font-family: Arial, sans-serif;
+    font-size: 1.1em;  /* Увеличивает размер шрифта */
+    font-weight: bold;  /* Делает шрифт жирным */
+    appearance: none;  /* Стандартное свойство */
+    -webkit-appearance: none;  /* Для Chrome и Safari */
+    -moz-appearance: textfield;  /* Для Firefox */
+    background-color: #16202D;
+    border-radius: 5px;
+    color: #c6d4df;
+    border: 1px solid #1B2838;  /* Добавляет тонкую рамку темнее, чем цвет фона */
+    box-shadow: 0px 0px 5px #0A1722;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 form {
     display: flex;
     margin-top: 15px;

@@ -17,4 +17,6 @@ urlpatterns = [
          name='archived_additions'),
     path('unarchive_addition/<int:pk>/', views.UnarchiveAdditionView.as_view(),
          name='unarchive_addition'),
+    path('save_current_price/', views.save_current_price,
+         name='save_current_price'),
 ]

@@ -1,5 +1,7 @@
 {% extends "base_generic.html" %}
 {% block content %}
+{% load static %}
+<script src="{% static 'main.js' %}"></script>
   <h1>Инвентарь</h1>
   <div class="inventory-item">
     <div class="item-left">
@@ -42,6 +44,10 @@
             <span class="item-label">Средняя цена:</span>
             <span class="item-value">{{ item.average_price|floatformat:2 }}</span>
         </div>
+        <div class="item-part">
+          <span class="item-label">Текущая цена:</span>
+          <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange='saveCurrentPrice({{ item.id }})' onkeypress='handleKeyPress(event, {{ item.id }})'>
+      </div>
     </div>
     </div>
   {% endfor %}

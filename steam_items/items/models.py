@@ -3,10 +3,11 @@ from django.db import models
 
 class Item(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    quantity = models.IntegerField(default=0)
-    total_price = models.FloatField(default=0.0)
     link = models.URLField(blank=True, null=True)
     image = models.TextField(blank=True, null=True)
+    quantity = models.IntegerField(default=0)
+    total_price = models.FloatField(default=0.0)
+    current_price = models.FloatField(default=0.0)
 
     class Meta:
         ordering = ['name']

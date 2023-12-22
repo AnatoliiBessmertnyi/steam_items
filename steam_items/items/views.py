@@ -1,15 +1,28 @@
+import json
+
 from django.shortcuts import redirect
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, RedirectView,) 
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView
-from django.urls import reverse_lazy
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from .models import Item, ItemAddition
 from .forms import ItemForm, ItemAdditionForm
 
 
 from django.db.models import Avg
+
+@csrf_exempt
+@require_POST
+def save_current_price(request):
+    data = json.loads(request.body)
+    item = Item.objects.get(id=data['item_id'])
+    item.current_price = data['current_price']
+    item.save()
+    return JsonResponse({'status': 'ok'})
 
 class IndexView(ListView):
     """
@@ -50,6 +63,8 @@ class IndexView(ListView):
         context['average_price'] = average_price
         context['items'] = items_with_average_price
         return context
+
+
 
 
 class ItemDetailView(DetailView):
