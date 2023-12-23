@@ -8,7 +8,7 @@ from django.views.generic import DeleteView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.http import HttpResponseBadRequest
+from django.utils import timezone
 
 from .models import Item, ItemAddition
 from .forms import ItemForm, ItemAdditionForm
@@ -27,18 +27,14 @@ def save_current_price(request):
 
 
 class IndexView(ListView):
-    """
-    Отображает список всех предметов, которые имеют неархивированные
-    сделки.
-    """
+    """Отображает список всех предметов, которые имеют неархивированные
+    сделки."""
     template_name = 'index.html'
     context_object_name = 'items'
 
     def get_queryset(self):
-        """
-        Возвращает QuerySet всех предметов, которые имеют неархивированные
-        сделки.
-        """
+        """Возвращает QuerySet всех предметов, которые имеют неархивированные
+        сделки."""
         return Item.objects.filter(quantity__gt=0)
 
 class IndexView(ListView):
@@ -87,9 +83,7 @@ class ItemDetailView(DetailView):
 
 
 class AddItemView(CreateView):
-    """
-    Представление для добавления новой сделки по предмету.
-    """
+    """Представление для добавления новой сделки по предмету."""
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'add_item.html'
@@ -98,7 +92,10 @@ class AddItemView(CreateView):
         """
         Переопределенный метод form_valid для обработки валидной формы.
         """
-        addition = form.save()
+        addition = form.save(commit=False)
+        addition.date = timezone.now()  # Устанавливаем текущее время
+        addition.save()
+
         item = addition.item
         if addition.transaction_type == 'BUY':
             item.quantity += addition.quantity
@@ -180,7 +177,7 @@ class CreateItemView(CreateView):
         if not item.image:
             item.image = 'static/images/broken_image.png'
         item.save()
-        return redirect('index')
+        return redirect(reverse('add_item', args=[item.id]))
     
 
 class ItemUpdateMixin:
@@ -204,11 +201,9 @@ class DeleteAdditionView(ItemUpdateMixin, DeleteView):
         return self.delete(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        """Удаляет сделку и обновляет предмет."""
-        addition = self.get_object()
-        item = addition.item
-        self.update_item(addition, item, reverse=True)
+        """Удаляет сделку."""
         return super().delete(*args, **kwargs)
+
 
 class ArchiveAdditionView(ItemUpdateMixin, RedirectView):
     """Обрабатывает архивирование существующих сделок."""
