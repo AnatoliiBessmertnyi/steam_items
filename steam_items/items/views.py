@@ -41,11 +41,14 @@ class IndexView(ListView):
         """
         return Item.objects.filter(quantity__gt=0)
 
+class IndexView(ListView):
+    template_name = 'index.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        return Item.objects.filter(quantity__gt=0)
+
     def get_context_data(self, **kwargs):
-        """
-        Добавляет в контекст общее количество, общую стоимость, среднюю цену и
-        список предметов с их средними ценами.
-        """
         context = super().get_context_data(**kwargs)
         items = self.get_queryset()
         total_quantity = sum(item.quantity for item in items)
@@ -58,6 +61,11 @@ class IndexView(ListView):
                 avg_price=Avg('price_per_item'))['avg_price']
             total_price += item_average_price * item.quantity if item_average_price else 0
             item.average_price = item_average_price
+            commission = additions.aggregate(commission=Avg('commission'))['commission']
+            if item_average_price and commission:
+                item.spread = ((item.current_price * ((100 - commission) / 100)) / item_average_price - 1) * 100
+                item.save()
+
             items_with_average_price.append(item)
         average_price = total_price / total_quantity if total_quantity else 0
         context['total_quantity'] = total_quantity
@@ -76,8 +84,6 @@ class ItemDetailView(DetailView):
         context['additions'] = ItemAddition.objects.filter(
             item=self.object, archived=False)
         return context
-
-
 
 
 class AddItemView(CreateView):

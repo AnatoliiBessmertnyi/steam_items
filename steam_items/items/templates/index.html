@@ -47,8 +47,12 @@
         <div class="item-part">
           <span class="item-label">Текущая цена:</span>
           <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
+        </div>
+        <div class="item-part item-spread {% if item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}">
+          <span class="item-label">Спред:</span>
+          <span class="item-value">{{ item.spread|floatformat:2 }}%</span>
+        </div>
       </div>
-    </div>
     </div>
   {% endfor %}
 {% endblock %}

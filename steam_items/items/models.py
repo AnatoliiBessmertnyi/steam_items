@@ -8,6 +8,8 @@ class Item(models.Model):
     quantity = models.IntegerField(default=0)
     total_price = models.FloatField(default=0.0)
     current_price = models.FloatField(default=0.0)
+    spread = models.FloatField(default=0.0)
+    
 
     class Meta:
         ordering = ['name']
