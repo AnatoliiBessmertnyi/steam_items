@@ -1,13 +1,18 @@
 {% extends "base_generic.html" %}
-
+{% load static %}
 {% block content %}
   <h1>Архивированные сделки</h1>
   {% regroup additions by item.name as additions_by_item %}
   {% for item in additions_by_item %}
     <h2 class="archive-item-name" onclick="toggleAdditions('{{ item.list.0.item.id }}')">
       <div style="display: flex; align-items: center;">
+        <!-- Проверяем, что если файл из статики, то искать его по абсолютному пути -->
         {% if item.list.0.item.image %}
-            <img src="{{ item.list.0.item.image }}" alt="{{ item.list.0.item.name }}" style="width: 50px; height: 50px; margin-right: 10px;">
+            {% if 'http' in item.list.0.item.image %}
+                <img src="{{ item.list.0.item.image }}" alt="{{ item.list.0.item.name }}" style="width: 50px; height: 50px; margin-right: 10px;">
+            {% else %}
+              <img src="/{{ item.list.0.item.image }}" alt="{{ item.list.0.item.name }}" style="width: 50px; height: 50px; margin-right: 10px;">
+            {% endif %}
         {% endif %}
         {{ item.grouper }} (<span style="font-size: 0.9em; margin-left: 2px; margin-right: 2px;">Кол-во: {{ item.list|length }} </span>)
       </div>
