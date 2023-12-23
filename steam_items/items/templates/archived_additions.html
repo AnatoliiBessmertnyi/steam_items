@@ -40,15 +40,28 @@
     </div>
   {% endfor %}
 
-  <script>
-  function toggleAdditions(itemId) {
-    var additionsDiv = document.getElementById("item" + itemId);
-    if (additionsDiv.style.display === "none") {
-      additionsDiv.style.display = "block";
-    } else {
-      additionsDiv.style.display = "none";
+<script>
+function toggleAdditions(itemId) {
+  var additionsDiv = document.getElementById("item" + itemId);
+  if (additionsDiv.style.display === "none") {
+    additionsDiv.style.display = "block";
+    document.cookie = itemId + '=block';
+  } else {
+    additionsDiv.style.display = "none";
+    document.cookie = itemId + '=none';
+  }
+}
+
+window.onload = function() {
+  var cookies = document.cookie.split(';');
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i].trim().split('=');
+    var additionsDiv = document.getElementById("item" + cookie[0]);
+    if (additionsDiv) {
+      additionsDiv.style.display = cookie[1];
     }
   }
-  </script>
+}
+</script>
 
 {% endblock %}
