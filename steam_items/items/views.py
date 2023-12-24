@@ -4,7 +4,6 @@ from django.db.models import Avg
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
@@ -89,9 +88,7 @@ class AddItemView(CreateView):
 
     def form_valid(self, form):
         """Переопределенный метод form_valid для обработки валидной формы."""
-        addition = form.save(commit=False)
-        addition.date = timezone.now()
-        addition.save()
+        addition = form.save()
 
         item = addition.item
         if addition.transaction_type == 'BUY':
