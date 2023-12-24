@@ -2,44 +2,58 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Добавить сделку</h1>
-  <form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="form-field">
-        {{ field.errors }}
-        {% if field.label and not field.field.widget.input_type == 'hidden' %}
-          {{ field.label_tag }}
-        {% endif %}
-        {% if field.name == 'date' %}
-          <input type="datetime-local" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|date:'Y-m-d\TH:i' }}">
-        {% else %}
-          {{ field }}
-        {% endif %}
-        {% if field.name == 'item' %}
-          <div class="item-image" style="margin-left: 20px;">
-            <img id="itemImage" src="" style="display: none;" alt="">
-          </div>
-        {% endif %}
-      </div>
+<h1>Добавить сделку</h1>
+<form method="post">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="form-field">
+      {{ field.errors }}
+      {% if field.label and not field.field.widget.input_type == 'hidden' %}
+        {{ field.label_tag }}
+      {% endif %}
+      {% if field.name == 'date' %}
+        <input type="datetime-local" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|date:'Y-m-d\TH:i' }}">
+      {% else %}
+        {{ field }}
+      {% endif %}
+      {% if field.name == 'item' %}
+        <div class="item-image" style="margin-left: 20px;">
+          <img id="itemImage" src="" style="display: none;" alt="">
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Добавить</button>
+</form>
+
+<script>
+  var itemImages = {
+    {% for item in items %}
+      "{{ item.id }}": "{{ item.image }}",
     {% endfor %}
-    <button type="submit">Добавить</button>
-  </form>
-  <script>
-    var itemImages = {
-      {% for item in items %}
-        "{{ item.id }}": "{{ item.image }}",
-      {% endfor %}
-    };
-    document.getElementById('id_item').addEventListener('change', function() {
-      var url = itemImages[this.value];
-      var img = document.getElementById('itemImage');
-      if (url) {
-        img.src = url;
-        img.style.display = 'block';
-      } else {
-        img.style.display = 'none';
-      }
-    });
-  </script>
+  };
+  var itemImageDiv = document.querySelector('.item-image');
+  var img = document.getElementById('itemImage');
+  var itemSelect = document.getElementById('id_item');
+  
+  if (!itemSelect.value) {
+    itemImageDiv.style.height = '0';
+    itemImageDiv.style.border = '0';
+  }
+  
+  itemSelect.addEventListener('change', function() {
+    var url = itemImages[this.value];
+    if (url) {
+      img.src = url;
+      img.style.display = 'block';
+      itemImageDiv.style.height = '60px';
+      itemImageDiv.style.border = '1px solid #c6d4df77';
+    } else {
+      img.style.display = 'none';
+      itemImageDiv.style.height = '0';
+      itemImageDiv.style.border = '0';
+    }
+  });
+</script>
+
 {% endblock %}
