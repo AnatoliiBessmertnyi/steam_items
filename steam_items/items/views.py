@@ -1,20 +1,18 @@
 import json
 
-from django.shortcuts import redirect
-from django.views.generic import (
-    ListView, DetailView, CreateView, UpdateView, RedirectView,) 
-from django.urls import reverse, reverse_lazy
-from django.views.generic import DeleteView
+from django.db.models import Avg
 from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  RedirectView, UpdateView)
 
+from .forms import ItemAdditionForm, ItemForm
 from .models import Item, ItemAddition
-from .forms import ItemForm, ItemAdditionForm
 
-
-from django.db.models import Avg
 
 @csrf_exempt
 @require_POST
@@ -25,17 +23,6 @@ def save_current_price(request):
     item.save()
     return JsonResponse({'status': 'ok'})
 
-
-class IndexView(ListView):
-    """Отображает список всех предметов, которые имеют неархивированные
-    сделки."""
-    template_name = 'index.html'
-    context_object_name = 'items'
-
-    def get_queryset(self):
-        """Возвращает QuerySet всех предметов, которые имеют неархивированные
-        сделки."""
-        return Item.objects.filter(quantity__gt=0)
 
 class IndexView(ListView):
     template_name = 'index.html'
@@ -52,14 +39,26 @@ class IndexView(ListView):
         items_with_average_price = []
         for item in items:
             additions = ItemAddition.objects.filter(
-                item=item, transaction_type='BUY', archived=False)
+                item=item, transaction_type='BUY', archived=False
+            )
             item_average_price = additions.aggregate(
-                avg_price=Avg('price_per_item'))['avg_price']
-            total_price += item_average_price * item.quantity if item_average_price else 0
+                avg_price=Avg('price_per_item')
+            )['avg_price']
+            total_price += (
+                item_average_price * item.quantity if item_average_price else 0
+            )
             item.average_price = item_average_price
-            commission = additions.aggregate(commission=Avg('commission'))['commission']
+            commission = additions.aggregate(
+                commission=Avg('commission')
+            )['commission']
             if item_average_price and commission:
-                item.spread = ((item.current_price * ((100 - commission) / 100)) / item_average_price - 1) * 100
+                item.spread = (
+                    (
+                        item.current_price * (
+                            (100 - commission) / 100
+                        )
+                    ) / item_average_price - 1
+                ) * 100
                 item.save()
 
             items_with_average_price.append(item)
@@ -89,11 +88,9 @@ class AddItemView(CreateView):
     template_name = 'add_item.html'
 
     def form_valid(self, form):
-        """
-        Переопределенный метод form_valid для обработки валидной формы.
-        """
+        """Переопределенный метод form_valid для обработки валидной формы."""
         addition = form.save(commit=False)
-        addition.date = timezone.now()  # Устанавливаем текущее время
+        addition.date = timezone.now()
         addition.save()
 
         item = addition.item
@@ -109,8 +106,7 @@ class AddItemView(CreateView):
             ItemAddition.objects.filter(item=item).update(archived=True)
 
         return redirect(reverse('item_detail', args=[item.id]))
-    
-    
+
     def get_form_kwargs(self):
         """
         Переопределенный метод get_form_kwargs для передачи item_id в форму.
@@ -118,7 +114,6 @@ class AddItemView(CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['item_id'] = self.kwargs.get('item_id')
         return kwargs
-
 
 
 class EditAdditionView(UpdateView):
@@ -163,7 +158,6 @@ class EditAdditionView(UpdateView):
         return super().form_valid(form)
 
 
-
 class CreateItemView(CreateView):
     '''Создание нового предмета.'''
     model = Item
@@ -178,7 +172,7 @@ class CreateItemView(CreateView):
             item.image = 'static/images/broken_image.png'
         item.save()
         return redirect(reverse('add_item', args=[item.id]))
-    
+
 
 class ItemUpdateMixin:
     """Миксин для обновления предмета на основе сделки."""
@@ -186,11 +180,20 @@ class ItemUpdateMixin:
         """Обновляет предмет на основе типа сделки."""
         if addition.transaction_type == 'BUY':
             item.quantity -= addition.quantity if reverse else addition.quantity
-            item.total_price -= addition.quantity * addition.price_per_item if reverse else addition.quantity * addition.price_per_item
+            item.total_price -= (
+                addition.quantity * addition.price_per_item
+                if reverse
+                else addition.quantity * addition.price_per_item
+            )
         else:
             item.quantity += addition.quantity if reverse else addition.quantity
-            item.total_price += addition.quantity * addition.price_per_item if reverse else addition.quantity * addition.price_per_item
+            item.total_price += (
+                addition.quantity * addition.price_per_item
+                if reverse
+                else addition.quantity * addition.price_per_item
+            )
         item.save()
+
 
 class DeleteAdditionView(ItemUpdateMixin, DeleteView):
     """Обрабатывает удаление существующих сделок."""
@@ -216,7 +219,6 @@ class ArchiveAdditionView(ItemUpdateMixin, RedirectView):
         self.update_item(addition, item)
         return reverse('item_detail', kwargs={'pk': addition.item.pk})
 
-    
 
 class ArchivedAdditionsView(ListView):
     template_name = 'archived_additions.html'
@@ -249,4 +251,3 @@ class UnarchiveAdditionView(RedirectView):
         if item.quantity == 0:
             ItemAddition.objects.filter(item=item).update(archived=True)
         return reverse('archived_additions')
-

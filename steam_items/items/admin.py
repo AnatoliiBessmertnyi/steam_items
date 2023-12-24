@@ -12,4 +12,5 @@ class ItemAdditionAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.delete()
 
+
 admin.site.register(ItemAddition, ItemAdditionAdmin)
