@@ -84,7 +84,7 @@ class AddItemView(CreateView):
     """Представление для добавления новой сделки по предмету."""
     model = ItemAddition
     form_class = ItemAdditionForm
-    template_name = 'add_item.html'
+    template_name = 'create_deal.html'
 
     def form_valid(self, form):
         """Переопределенный метод form_valid для обработки валидной формы."""
@@ -119,7 +119,7 @@ class EditAdditionView(UpdateView):
     """
     model = ItemAddition
     form_class = ItemAdditionForm
-    template_name = 'edit_addition.html'
+    template_name = 'edit_deal.html'
 
     def get_success_url(self):
         """
@@ -147,6 +147,10 @@ class EditAdditionView(UpdateView):
         соответствующий предмет.
         """
         old_addition = ItemAddition.objects.get(id=self.object.id)
+        addition = form.save(commit=False)
+        seconds = form.cleaned_data.get('seconds')
+        if seconds is not None:
+            addition.date = addition.date.replace(second=seconds)
         addition = form.save()
         item = addition.item
         self.update_item(item, old_addition, is_reversed=True)
@@ -168,7 +172,7 @@ class CreateItemView(CreateView):
         if not item.image:
             item.image = 'static/images/broken_image.png'
         item.save()
-        return redirect(reverse('add_item', args=[item.id]))
+        return redirect(reverse('create_deal', args=[item.id]))
 
 
 class ItemUpdateMixin:

@@ -8,7 +8,9 @@
     {% for field in form %}
       <div class="form-group">
         {{ field.errors }}
-        {{ field.label_tag }}
+        {% if field.label and not field.field.widget.input_type == 'hidden' %}
+          {{ field.label_tag }}
+        {% endif %}
         {% if field.name == 'date' %}
           <input type="datetime-local" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|date:'Y-m-d\TH:i' }}">
         {% else %}

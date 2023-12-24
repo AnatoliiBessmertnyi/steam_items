@@ -33,7 +33,7 @@
               <span class="item-value">{{ addition.price_per_item }}</span>
             </div>
             <a class="deal-change-archived" href="{% url 'unarchive_addition' addition.id %}">Восстановить</a>
-            <a class="deal-change-archived" href="{% url 'delete_addition' addition.id %}" onclick="return confirm('Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.')">Удалить</a>
+            <a class="deal-change-archived" href="{% url 'delete_deal' addition.id %}" onclick="return confirm('Вы уверены, что хотите удалить эту сделку? Это действие нельзя отменить.')">Удалить</a>
           </div>
         </div>
       {% endfor %}

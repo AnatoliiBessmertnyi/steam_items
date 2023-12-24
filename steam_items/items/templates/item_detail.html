@@ -5,7 +5,7 @@
     <h1>{{ item.name }}</h1>
   </div>
   <div class="button-wrapper">
-    <a href="{% url 'add_item' item.id %}" class="add-deal-button">Добавить сделку по данному предмету</a>
+    <a href="{% url 'create_deal' item.id %}" class="add-deal-button">Добавить сделку по данному предмету</a>
   </div>
   <div class="deal-container">
     {% for addition in additions %}
@@ -18,7 +18,7 @@
         </div>
         <div class="deal-change-details">
           <a href="{% url 'archive_addition' addition.id %}">Архивировать</a>
-          <a href="{% url 'edit_addition' addition.id %}">Редактировать</a>
+          <a href="{% url 'edit_deal' addition.id %}">Редактировать</a>
         </div>
       </div>
     {% endfor %}

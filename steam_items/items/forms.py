@@ -12,11 +12,15 @@ class ItemAdditionForm(forms.ModelForm):
         required=False,
         label='Дата и время',
     )
+    seconds = forms.IntegerField(
+        widget=forms.HiddenInput(),
+        required=False,
+    )
 
     class Meta:
         model = ItemAddition
         fields = ['item', 'transaction_type', 'quantity', 'price_per_item',
-                  'commission', 'date']
+                  'commission', 'date', 'seconds']
 
     def __init__(self, *args, **kwargs):
         """Инициализация формы. Устанавливает начальные значения."""
@@ -25,6 +29,9 @@ class ItemAdditionForm(forms.ModelForm):
         self.fields['quantity'].initial = 1
         if not self.instance.pk:
             self.initial['date'] = timezone.now().strftime('%d.%m.%Y %H:%M')
+            self.initial['seconds'] = timezone.now().second
+        else:
+            self.initial['seconds'] = self.instance.date.second
         if item_id:
             self.initial['item'] = item_id
 
