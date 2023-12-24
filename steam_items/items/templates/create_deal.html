@@ -1,3 +1,4 @@
+// @ts-nocheck
 {% extends "base_generic.html" %}
 
 {% block content %}
@@ -15,8 +16,30 @@
         {% else %}
           {{ field }}
         {% endif %}
+        {% if field.name == 'item' %}
+          <div class="item-image" style="margin-left: 20px;">
+            <img id="itemImage" src="" style="display: none;" alt="">
+          </div>
+        {% endif %}
       </div>
     {% endfor %}
     <button type="submit">Добавить</button>
   </form>
+  <script>
+    var itemImages = {
+      {% for item in items %}
+        "{{ item.id }}": "{{ item.image }}",
+      {% endfor %}
+    };
+    document.getElementById('id_item').addEventListener('change', function() {
+      var url = itemImages[this.value];
+      var img = document.getElementById('itemImage');
+      if (url) {
+        img.src = url;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+    });
+  </script>
 {% endblock %}

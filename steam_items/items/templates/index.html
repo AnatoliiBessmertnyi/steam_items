@@ -3,6 +3,7 @@
 {% load static %}
 <script src="{% static 'main.js' %}"></script>
   <h1>Инвентарь</h1>
+
   <div class="inventory-item">
     <div class="item-left">
       <h2>Общая информация</h2>
@@ -12,10 +13,12 @@
         <span class="item-label">Количество:</span>
         <span class="item-value">{{ total_quantity }}</span>
       </div>
+
       <div class="item-part">
         <span class="item-label">Ср. цена:</span>
         <span class="item-value">{{ average_price|floatformat:2 }}</span>
       </div>
+
       <div class="item-part">
         <span class="item-label">Стоимость:</span>
         <span class="item-value">{{ total_price|floatformat:2 }}</span>
@@ -29,26 +32,32 @@
         <a href="{% url 'item_detail' item.id %}">
           <div style="display: flex; align-items: center;">
             {% if item.image %}
-                <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 60px; height: 60px; margin-right: 10px;">
+            <div class="item-image">
+              <img src="{{ item.image }}" alt="{{ item.name }}">
+            </div>
             {% endif %}
             <h2>{{ item.name }}</h2>
           </div>
         </a>
       </div>
+
       <div class="item-right">
-        <div class="item-part">
-            <span class="item-label">Количество:</span>
-            <span class="item-value">{{ item.quantity }}</span>
+        <div class="item-part item-quantity" style="width: 110px;">
+          <span class="item-label">Количество:</span>
+          <span class="item-value">{{ item.quantity }}</span>
         </div>
-        <div class="item-part">
-            <span class="item-label">Ср. цена:</span>
-            <span class="item-value">{{ item.average_price|floatformat:2 }}</span>
+
+        <div class="item-part item-average-price" style="width: 120px;">
+          <span class="item-label">Ср. цена:</span>
+          <span class="item-value">{{ item.average_price|floatformat:2 }}</span>
         </div>
-        <div class="item-part">
+
+        <div class="item-part item-current-price">
           <span class="item-label">Текущая цена:</span>
           <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
         </div>
-        <div class="item-part item-spread {% if item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}">
+
+        <div class="item-part item-spread {% if item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}" style="width: 100px;">
           <span class="item-label">Спред:</span>
           <span class="item-value">{{ item.spread|floatformat:2 }}%</span>
         </div>
