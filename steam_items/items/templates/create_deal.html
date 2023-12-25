@@ -1,4 +1,3 @@
-// @ts-nocheck
 {% extends "base_generic.html" %}
 
 {% block content %}
@@ -18,7 +17,7 @@
       {% endif %}
       {% if field.name == 'item' %}
         <div class="item-image" style="margin-left: 20px;">
-          <img id="itemImage" src="" style="display: none;" alt="">
+          <img id="itemImage" src="{{ items.0.image }}" style="display: none;" alt="">
         </div>
       {% endif %}
     </div>
@@ -35,25 +34,31 @@
   var itemImageDiv = document.querySelector('.item-image');
   var img = document.getElementById('itemImage');
   var itemSelect = document.getElementById('id_item');
-  
-  if (!itemSelect.value) {
-    itemImageDiv.style.height = '0';
-    itemImageDiv.style.border = '0';
-  }
-  
-  itemSelect.addEventListener('change', function() {
+
+  function updateImage() {
     var url = itemImages[this.value];
     if (url) {
+      if (!url.startsWith('http')) {
+        url = '/' + url;
+      }
       img.src = url;
+      img.style.display = 'block';
+      itemImageDiv.style.height = '60px';
+      itemImageDiv.style.border = '1px solid #c6d4df77';
+    } else if (this.value) {
       img.style.display = 'block';
       itemImageDiv.style.height = '60px';
       itemImageDiv.style.border = '1px solid #c6d4df77';
     } else {
       img.style.display = 'none';
       itemImageDiv.style.height = '0';
-      itemImageDiv.style.border = '0';
+      itemImageDiv.style.border = 'none';
     }
-  });
-</script>
+  }
 
+  itemSelect.addEventListener('change', updateImage);
+  
+  // Вызовите функцию updateImage при загрузке страницы
+  updateImage.call(itemSelect);
+</script>
 {% endblock %}
