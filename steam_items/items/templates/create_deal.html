@@ -1,5 +1,4 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
 <h1>Добавить сделку</h1>
 <form method="post">
@@ -10,7 +9,14 @@
       {% if field.label and not field.field.widget.input_type == 'hidden' %}
         {{ field.label_tag }}
       {% endif %}
-      {% if field.name == 'date' %}
+      {% if field.name == 'transaction_type' %}
+        <!-- Добавляем кнопки для выбора типа сделки -->
+        <div class="transaction-type-buttons">
+          <button type="button" id="buyButton" onclick="setTransactionType('BUY')">Купил</button>
+          <button type="button" id="sellButton" onclick="setTransactionType('SELL')">Продал</button>
+        </div>
+        {{ field.as_hidden }}
+      {% elif field.name == 'date' %}
         <input type="datetime-local" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value|date:'Y-m-d\TH:i' }}">
       {% else %}
         {{ field }}
@@ -37,7 +43,7 @@
   var itemImageDiv = document.querySelector('.item-image');
   var img = document.getElementById('itemImage');
   var itemSelect = document.getElementById('id_item');
-
+  
   // Функция для обновления изображения в зависимости от выбранного предмета
   function updateImage() {
     var url = itemImages[this.value];
@@ -62,12 +68,30 @@
       itemImageDiv.style.border = 'none';
     }
   }
-
   // Добавляем обработчик события 'change' для выпадающего списка предметов
   itemSelect.addEventListener('change', updateImage);
-  
   // Вызываем функцию updateImage при загрузке страницы
   updateImage.call(itemSelect);
+
+  // Получение элементов DOM
+  var buyButton = document.getElementById('buyButton');
+  var sellButton = document.getElementById('sellButton');
+  var transactionTypeSelect = document.getElementById('id_transaction_type');
+
+  function setTransactionType(type) {
+    transactionTypeSelect.value = type;
+    if (type === 'BUY') {
+      buyButton.classList.add('selected');
+      sellButton.classList.remove('selected');
+    } else if (type === 'SELL') {
+      sellButton.classList.add('selected');
+      buyButton.classList.remove('selected');
+    }
+  }
+
+  buyButton.addEventListener('click', function() { setTransactionType('BUY'); });
+  sellButton.addEventListener('click', function() { setTransactionType('SELL'); });
+  setTransactionType('BUY')
 </script>
 
 {% endblock %}

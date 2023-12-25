@@ -58,9 +58,10 @@ class IndexView(ListView):
                         )
                     ) / item_average_price - 1
                 ) * 100
-                item.save()
-
+            item.target = item.average_price * 1.495 if item.average_price else 0
+            item.save()
             items_with_average_price.append(item)
+
         average_price = total_price / total_quantity if total_quantity else 0
         context['total_quantity'] = total_quantity
         context['total_price'] = total_price

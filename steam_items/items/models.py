@@ -14,6 +14,7 @@ class Item(models.Model):
     current_price = models.FloatField(default=0.0)
     spread = models.FloatField(default=0.0)
     last_deal_time = models.DateTimeField(null=True, blank=True)
+    target = models.FloatField(default=0.0)
 
     class Meta:
         ordering = ['-last_deal_time']

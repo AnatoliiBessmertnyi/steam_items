@@ -25,12 +25,21 @@ function saveCurrentPrice(itemId) {
             'item_id': itemId,
             'current_price': currentPrice
         })
+    }).then(function(response) {
+        if (response.ok) {
+            location.reload();
+        } else {
+            throw new Error('Ошибка сети.');
+        }
     });
 }
 
+
+
+
 function handleKeyPress(event, itemId) {
     if (event.key === 'Enter') {
-        event.preventDefault();  // Предотвращает отправку формы
-        document.getElementById('current_price_' + itemId).blur();  // Убирает фокус с поля ввода
+        event.preventDefault();
+        document.getElementById('current_price_' + itemId).blur();
     }
 }

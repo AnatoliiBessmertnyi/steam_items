@@ -57,6 +57,11 @@
           <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
         </div>
 
+        <div class="item-part item-target-price" style="width: 100px;">
+          <span class="item-label">Цель:</span>
+          <span class="item-value" id="target_price_{{ item.id }}">{{ item.target|floatformat:2 }}</span>
+        </div>
+
         <div class="item-part item-spread {% if item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}" style="width: 100px;">
           <span class="item-label">Спред:</span>
           <span class="item-value">{{ item.spread|floatformat:2 }}%</span>

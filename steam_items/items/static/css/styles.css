@@ -168,7 +168,7 @@ form input, form select, form textarea {
     font-weight: bold;
     padding: 10px;
     font-size: 0.9em;
-    width: 12%;
+    width: 14%;
 }
 
 form textarea {
@@ -192,6 +192,41 @@ form button {
     font-weight: bold;
     width: 15%;
 }
+
+#buyButton, #sellButton {
+    width: 90px; /* Уменьшаем ширину кнопки */
+    text-align: center; /* Выравниваем текст по центру */
+    border: none; /* Убираем рамки */
+    color: white; /* Цвет текста */
+    font-family: Arial, sans-serif; /* Шрифт */
+    height: 32px;
+    margin-right: 10px;
+    
+}
+  
+#buyButton {
+    background-color: #4CAF50; /* Green */
+}
+
+#buyButton:hover, #buyButton.selected {
+    background-color: #388E3C; /* Darker green */
+    box-shadow: 0 0 10px #4CAF50; /* Добавляем зеленую рамку вокруг кнопки */
+}
+
+#sellButton {
+    background-color: #f44336; /* Red */
+}
+
+#sellButton:hover, #sellButton.selected {
+    background-color: #d32f2f; /* Darker red */
+    box-shadow: 0 0 10px #f44336; /* Добавляем красную рамку вокруг кнопки */
+}
+
+
+
+  
+  
+  
 
 /* Название предмета в архиве */
 .archive-item-name {
