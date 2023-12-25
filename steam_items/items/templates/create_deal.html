@@ -26,18 +26,23 @@
 </form>
 
 <script>
+  // Создание словаря, где ключи - это ID предметов, а значения - это URL изображений предметов
   var itemImages = {
     {% for item in items %}
       "{{ item.id }}": "{{ item.image }}",
     {% endfor %}
   };
+
+  // Получение элементов DOM
   var itemImageDiv = document.querySelector('.item-image');
   var img = document.getElementById('itemImage');
   var itemSelect = document.getElementById('id_item');
 
+  // Функция для обновления изображения в зависимости от выбранного предмета
   function updateImage() {
     var url = itemImages[this.value];
     if (url) {
+      // Если URL изображения не начинается с 'http', добавляем '/' в начало
       if (!url.startsWith('http')) {
         url = '/' + url;
       }
@@ -46,19 +51,23 @@
       itemImageDiv.style.height = '60px';
       itemImageDiv.style.border = '1px solid #c6d4df77';
     } else if (this.value) {
+      // Если предмет выбран, но у него нет URL изображения, отображаем изображение по умолчанию
       img.style.display = 'block';
       itemImageDiv.style.height = '60px';
       itemImageDiv.style.border = '1px solid #c6d4df77';
     } else {
+      // Если предмет не выбран, скрываем изображение
       img.style.display = 'none';
       itemImageDiv.style.height = '0';
       itemImageDiv.style.border = 'none';
     }
   }
 
+  // Добавляем обработчик события 'change' для выпадающего списка предметов
   itemSelect.addEventListener('change', updateImage);
   
-  // Вызовите функцию updateImage при загрузке страницы
+  // Вызываем функцию updateImage при загрузке страницы
   updateImage.call(itemSelect);
 </script>
+
 {% endblock %}

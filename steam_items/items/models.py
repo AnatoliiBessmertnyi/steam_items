@@ -58,6 +58,23 @@ class ItemAddition(models.Model):
 def update_item_last_deal_time(sender, instance, **kwargs):
     """Обработчик сигнала, который вызывается после сохранения экземпляра
     ItemAddition. Обновляет поле last_deal_time в соответствующем экземпляре
-    Item временем сделки."""
-    instance.item.last_deal_time = instance.date
+    Item временем последней неархивированной сделки.
+
+    Если сделка архивирована, то время последней сделки у предмета обновляется
+    до времени последней неархивированной сделки. Если все сделки с предметом
+    архивированы, то last_deal_time устанавливается в None.
+
+    Если сделка не архивирована, то last_deal_time устанавливается во время
+    этой сделки."""
+    if instance.archived:
+        last_non_archived_deal = ItemAddition.objects.filter(
+            item=instance.item,
+            archived=False
+        ).order_by('-date').first()
+        if last_non_archived_deal is not None:
+            instance.item.last_deal_time = last_non_archived_deal.date
+        else:
+            instance.item.last_deal_time = None
+    else:
+        instance.item.last_deal_time = instance.date
     instance.item.save()
