@@ -16,21 +16,35 @@ from .models import Item, ItemAddition
 @csrf_exempt
 @require_POST
 def save_current_price(request):
+    """Обработчик POST-запроса для сохранения текущей цены товара.
+    Функция получает данные из запроса, извлекает товар по id из базы данных,
+    обновляет текущую цену товара и сохраняет изменения в базе данных."""
     data = json.loads(request.body)
     item = Item.objects.get(id=data['item_id'])
+    old_price = request.session.get(f'old_price_{item.id}', None)
+    request.session[f'old_price_{item.id}'] = item.current_price
     item.current_price = data['current_price']
     item.save()
     return JsonResponse({'status': 'ok'})
 
 
 class IndexView(ListView):
+    """Представление для отображения списка товаров на главной странице.
+    Класс наследуется от ListView и переопределяет методы get_queryset и
+    get_context_data для получения списка товаров и добавления дополнительных
+    данных в контекст шаблона."""
     template_name = 'index.html'
     context_object_name = 'items'
 
     def get_queryset(self):
+        """Получает список товаров, количество которых больше 0."""
         return Item.objects.filter(quantity__gt=0)
 
     def get_context_data(self, **kwargs):
+        """Добавляет дополнительные данные в контекст шаблона.
+        Функция вычисляет общее количество товаров, общую стоимость, среднюю
+        цену, а также рассчитывает среднюю цену, цель и спред для каждого
+        товара."""
         context = super().get_context_data(**kwargs)
         items = self.get_queryset()
         total_quantity = sum(item.quantity for item in items)

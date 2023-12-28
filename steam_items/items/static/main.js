@@ -1,3 +1,9 @@
+/**
+ * Получает значение куки по имени.
+ *
+ * @param {string} name - Имя куки.
+ * @returns {string|null} Значение куки или null, если куки не найдено.
+ */
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -13,8 +19,15 @@ function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ * Сохраняет текущую цену товара.
+ *
+ * @param {string} itemId - ID товара.
+ */
 function saveCurrentPrice(itemId) {
-    var currentPrice = document.getElementById('current_price_' + itemId).value;
+    var currentPrice = parseFloat(document.getElementById('current_price_' + itemId).value);
+    var oldPrice = parseFloat(document.getElementById('old_current_price_' + itemId).value);
+
     fetch('/save_current_price/', {
         method: 'POST',
         headers: {
@@ -27,16 +40,31 @@ function saveCurrentPrice(itemId) {
         })
     }).then(function(response) {
         if (response.ok) {
-            location.reload();
+            var arrowField = document.getElementById('arrow_' + itemId);
+            arrowField.className = 'item-label';
+            if (oldPrice !== undefined && currentPrice > oldPrice) {
+                arrowField.classList.add('arrow-up');
+            } else if (oldPrice !== undefined && currentPrice < oldPrice) {
+                arrowField.classList.add('arrow-down');
+            }
+
+            document.getElementById('old_current_price_' + itemId).value = currentPrice;
+
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
         } else {
             throw new Error('Ошибка сети.');
         }
     });
 }
 
-
-
-
+/**
+ * Обрабатывает нажатие клавиши в поле ввода цены.
+ *
+ * @param {Event} event - Событие нажатия клавиши.
+ * @param {string} itemId - ID товара.
+ */
 function handleKeyPress(event, itemId) {
     if (event.key === 'Enter') {
         event.preventDefault();

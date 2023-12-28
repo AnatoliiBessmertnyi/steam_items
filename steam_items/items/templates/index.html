@@ -53,8 +53,9 @@
         </div>
 
         <div class="item-part item-current-price">
-          <span class="item-label">Текущая цена:</span>
+          <span class="item-label" id="arrow_{{ item.id }}">Текущая цена:</span>
           <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
+          <input type="hidden" id="old_current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}">
         </div>
 
         <div class="item-part item-target-price" style="width: 100px;">
