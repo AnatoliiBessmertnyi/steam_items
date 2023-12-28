@@ -20,4 +20,8 @@ urlpatterns = [
          name='unarchive_addition'),
     path('save_current_price/', views.save_current_price,
          name='save_current_price'),
+    path('price_history/<int:item_id>/', views.PriceHistoryView.as_view(),
+         name='price_history'),
+    path('price_history_json/<int:item_id>/', views.PriceHistoryJsonView.as_view(),
+         name='price_history_json'),
 ]

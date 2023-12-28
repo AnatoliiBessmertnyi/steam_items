@@ -1,0 +1,11 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+<script src="{% static 'price_history.js' %}"></script>
+<h1 data-item-id="{{ item.id }}">История цен для {{ item.name }}</h1>
+<canvas id="myChart"></canvas>
+{% endblock %}

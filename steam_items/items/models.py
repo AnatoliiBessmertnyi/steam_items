@@ -79,3 +79,14 @@ def update_item_last_deal_time(sender, instance, **kwargs):
     else:
         instance.item.last_deal_time = instance.date
     instance.item.save()
+
+
+class PriceHistory(models.Model):
+    """Модель истории цен. Сохраняет историю изменения цен для каждого
+    предмета."""
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    price = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']

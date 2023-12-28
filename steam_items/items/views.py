@@ -2,15 +2,16 @@ import json
 
 from django.db.models import Avg
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   RedirectView, UpdateView)
 
 from .forms import ItemAdditionForm, ItemForm
-from .models import Item, ItemAddition
+from .models import Item, ItemAddition, PriceHistory
 
 
 @csrf_exempt
@@ -18,13 +19,16 @@ from .models import Item, ItemAddition
 def save_current_price(request):
     """Обработчик POST-запроса для сохранения текущей цены товара.
     Функция получает данные из запроса, извлекает товар по id из базы данных,
-    обновляет текущую цену товара и сохраняет изменения в базе данных."""
+    обновляет текущую цену товара, сохраняет изменения в базе данных и
+    добавляет запись в историю цен."""
+
     data = json.loads(request.body)
     item = Item.objects.get(id=data['item_id'])
     old_price = request.session.get(f'old_price_{item.id}', None)
     request.session[f'old_price_{item.id}'] = item.current_price
     item.current_price = data['current_price']
     item.save()
+    PriceHistory.objects.create(item=item, price=data['current_price'])
     return JsonResponse({'status': 'ok'})
 
 
@@ -33,6 +37,7 @@ class IndexView(ListView):
     Класс наследуется от ListView и переопределяет методы get_queryset и
     get_context_data для получения списка товаров и добавления дополнительных
     данных в контекст шаблона."""
+
     template_name = 'index.html'
     context_object_name = 'items'
 
@@ -45,6 +50,7 @@ class IndexView(ListView):
         Функция вычисляет общее количество товаров, общую стоимость, среднюю
         цену, а также рассчитывает среднюю цену, цель и спред для каждого
         товара."""
+
         context = super().get_context_data(**kwargs)
         items = self.get_queryset()
         total_quantity = sum(item.quantity for item in items)
@@ -97,14 +103,15 @@ class ItemDetailView(DetailView):
 
 class AddItemView(CreateView):
     """Представление для добавления новой сделки по предмету."""
+
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'create_deal.html'
 
     def form_valid(self, form):
         """Переопределенный метод form_valid для обработки валидной формы."""
-        addition = form.save()
 
+        addition = form.save()
         item = addition.item
         if addition.transaction_type == 'BUY':
             item.quantity += addition.quantity
@@ -120,9 +127,9 @@ class AddItemView(CreateView):
         return redirect(reverse('item_detail', args=[item.id]))
 
     def get_form_kwargs(self):
-        """
-        Переопределенный метод get_form_kwargs для передачи item_id в форму.
-        """
+        """ Переопределенный метод get_form_kwargs для передачи item_id в
+        форму."""
+
         kwargs = super().get_form_kwargs()
         kwargs['item_id'] = self.kwargs.get('item_id')
         return kwargs
@@ -134,25 +141,23 @@ class AddItemView(CreateView):
 
 
 class EditAdditionView(UpdateView):
-    """
-    EditAdditionView обрабатывает обновление существующих сделок.
-    """
+    """EditAdditionView обрабатывает обновление существующих сделок."""
+
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'edit_deal.html'
 
     def get_success_url(self):
-        """
-        Возвращает URL для перенаправления после успешного обновления сделки.
-        """
+        """Возвращает URL для перенаправления после успешного обновления
+        сделки."""
+
         return reverse('item_detail', kwargs={'pk': self.object.item.id})
 
     def update_item(self, item, addition, is_reversed=False):
-        """
-        Обновляет данные предмета на основе сделки.
+        """Обновляет данные предмета на основе сделки.
         Если is_reversed=True, то обновление будет выполнено в обратном
-        порядке.
-        """
+        порядке."""
+
         factor = -1 if is_reversed else 1
         if addition.transaction_type == 'BUY':
             item.quantity += factor * addition.quantity
@@ -162,10 +167,8 @@ class EditAdditionView(UpdateView):
             item.total_price -= factor * addition.quantity * addition.price_per_item
 
     def form_valid(self, form):
-        """
-        Обрабатывает валидацию формы. Если форма валидна, обновляет сделку и
-        соответствующий предмет.
-        """
+        """Обрабатывает валидацию формы. Если форма валидна, обновляет сделку и
+        соответствующий предмет."""
         old_addition = ItemAddition.objects.get(id=self.object.id)
         addition = form.save(commit=False)
         seconds = form.cleaned_data.get('seconds')
@@ -197,6 +200,7 @@ class CreateItemView(CreateView):
 
 class ItemUpdateMixin:
     """Миксин для обновления предмета на основе сделки."""
+
     def update_item(self, addition, item, reverse=False):
         """Обновляет предмет на основе типа сделки."""
         if addition.transaction_type == 'BUY':
@@ -231,6 +235,7 @@ class DeleteAdditionView(ItemUpdateMixin, DeleteView):
 
 class ArchiveAdditionView(ItemUpdateMixin, RedirectView):
     """Обрабатывает архивирование существующих сделок."""
+
     def get_redirect_url(self, *args, **kwargs):
         """Архивирует сделку, обновляет предмет и возвращает URL."""
         addition = ItemAddition.objects.get(id=kwargs['pk'])
@@ -252,6 +257,7 @@ class ArchivedAdditionsView(ListView):
 
 class UnarchiveAdditionView(RedirectView):
     """Представление для восстановления архивированных сделок."""
+
     def get_redirect_url(self, *args, **kwargs):
         """Восстанавливает сделку, обновляет предмет и возвращает URL."""
         addition = ItemAddition.objects.get(id=kwargs['pk'])
@@ -272,3 +278,24 @@ class UnarchiveAdditionView(RedirectView):
         if item.quantity == 0:
             ItemAddition.objects.filter(item=item).update(archived=True)
         return reverse('archived_additions')
+
+
+class PriceHistoryView(View):
+    """Класс для отображения истории цен для конкретного предмета."""
+
+    def get(self, request, item_id):
+        item = Item.objects.get(id=item_id)
+        return render(request, 'price_history.html', {'item': item})
+
+
+class PriceHistoryJsonView(View):
+    """Класс для возвращения истории цен для конкретного предмета в формате
+    JSON."""
+
+    def get(self, request, item_id):
+        history = PriceHistory.objects.filter(item_id=item_id)
+        data = [
+            {"time": record.timestamp.isoformat(),
+             "price": record.price} for record in history
+        ]
+        return JsonResponse(data, safe=False)
