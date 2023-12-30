@@ -69,6 +69,7 @@ class ItemAdditionForm(forms.ModelForm):
 
 
 class ItemForm(forms.ModelForm):
+    """Форма создания нового предмета."""
     class Meta:
         model = Item
         fields = ['name', 'link', 'image']

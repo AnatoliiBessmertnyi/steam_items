@@ -103,14 +103,12 @@ class ItemDetailView(DetailView):
 
 class AddItemView(CreateView):
     """Представление для добавления новой сделки по предмету."""
-
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'create_deal.html'
 
     def form_valid(self, form):
         """Переопределенный метод form_valid для обработки валидной формы."""
-
         addition = form.save()
         item = addition.item
         if addition.transaction_type == 'BUY':
@@ -129,7 +127,6 @@ class AddItemView(CreateView):
     def get_form_kwargs(self):
         """ Переопределенный метод get_form_kwargs для передачи item_id в
         форму."""
-
         kwargs = super().get_form_kwargs()
         kwargs['item_id'] = self.kwargs.get('item_id')
         return kwargs
@@ -142,7 +139,6 @@ class AddItemView(CreateView):
 
 class EditAdditionView(UpdateView):
     """EditAdditionView обрабатывает обновление существующих сделок."""
-
     model = ItemAddition
     form_class = ItemAdditionForm
     template_name = 'edit_deal.html'
@@ -150,14 +146,12 @@ class EditAdditionView(UpdateView):
     def get_success_url(self):
         """Возвращает URL для перенаправления после успешного обновления
         сделки."""
-
         return reverse('item_detail', kwargs={'pk': self.object.item.id})
 
     def update_item(self, item, addition, is_reversed=False):
         """Обновляет данные предмета на основе сделки.
         Если is_reversed=True, то обновление будет выполнено в обратном
         порядке."""
-
         factor = -1 if is_reversed else 1
         if addition.transaction_type == 'BUY':
             item.quantity += factor * addition.quantity
