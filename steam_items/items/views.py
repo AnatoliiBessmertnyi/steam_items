@@ -99,7 +99,6 @@ class IndexView(ListView):
         return context
 
 
-
 class ItemDetailView(DetailView):
     model = Item
     template_name = 'item_detail.html'
