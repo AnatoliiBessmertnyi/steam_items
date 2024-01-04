@@ -42,15 +42,22 @@
       </div>
 
       <div class="item-right">
-        <div class="item-part item-quantity" style="width: 110px;">
-          <span class="item-label">Количество:</span>
-          <span class="item-value">{{ item.quantity }}</span>
-        </div>
+        <div class="item-amount-details">
+          <div class="item-part item-quantity" style="width: 110px;">
+              <span class="item-label">Количество:</span>
+              <span class="item-value">{{ item.quantity }}</span>
+          </div>
+  
+          <div class="item-part item-average-price" style="width: 120px;">
+            <span class="item-label">Ср. цена:</span>
+            <span class="item-value">{{ item.average_price|floatformat:2 }}</span>
+          </div>
 
-        <div class="item-part item-average-price" style="width: 120px;">
-          <span class="item-label">Ср. цена:</span>
-          <span class="item-value">{{ item.average_price|floatformat:2 }}</span>
-        </div>
+          <div class="item-part">
+              <span class="item-label">Общая стоимость:</span>
+              <span class="item-value">{{ item.total_price|floatformat:2 }}</span>
+          </div>
+      </div>
 
         <div class="item-part item-current-price">
           <a href="{% url 'price_history' item.id %}">

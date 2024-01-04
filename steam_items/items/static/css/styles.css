@@ -107,6 +107,23 @@ h1 {
     align-items: center;
 }
 
+.item-amount-details {
+    position: relative;
+}
+
+.item-amount-details .item-part:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.item-amount-details .item-part .item-label {
+    margin-right: 55px;
+}
+
+.item-amount-details .item-part .item-value {
+    position: absolute;
+    right: 0;
+}
+
 .item-value {
     font-size: 1.1em;
     font-weight: bold;

@@ -45,41 +45,50 @@ class IndexView(ListView):
         """Получает список товаров, количество которых больше 0."""
         return Item.objects.filter(quantity__gt=0)
 
-    def get_context_data(self, **kwargs):
-        """Добавляет дополнительные данные в контекст шаблона.
-        Функция вычисляет общее количество товаров, общую стоимость, среднюю
-        цену, а также рассчитывает среднюю цену, цель и спред для каждого
-        товара."""
+    def calculate_item_details(self, item):
+        """Вычисляет детали для каждого отдельного предмета.
+        Эта функция принимает предмет в качестве входных данных и вычисляет
+        среднюю цену, общую стоимость, спред и целевую цену этого предмета.
+        Эти значения затем сохраняются в предмете."""
+        additions = ItemAddition.objects.filter(
+            item=item, transaction_type='BUY', archived=False
+        )
+        item_average_price = additions.aggregate(
+            avg_price=Avg('price_per_item')
+        )['avg_price']
+        item.average_price = item_average_price
+        item.total_price = item_average_price * item.quantity if item_average_price else 0
+        commission = additions.aggregate(
+            commission=Avg('commission')
+        )['commission']
+        if item_average_price and commission:
+            item.spread = (
+                (
+                    item.current_price * (
+                        (100 - commission) / 100
+                    )
+                ) / item_average_price - 1
+            ) * 100
+        item.target = item.average_price * 1.495 if item.average_price else 0
+        item.save()
+        return item
 
+    def get_context_data(self, **kwargs):
+        """Получает контекст данных для отображения на странице.
+        Эта функция вычисляет общее количество предметов, общую стоимость и
+        среднюю цену. Она также вызывает функцию `calculate_item_details` для
+        каждого предмета, чтобы вычислить детали предмета."""
         context = super().get_context_data(**kwargs)
         items = self.get_queryset()
         total_quantity = sum(item.quantity for item in items)
         total_price = 0
         items_with_average_price = []
         for item in items:
-            additions = ItemAddition.objects.filter(
-                item=item, transaction_type='BUY', archived=False
-            )
-            item_average_price = additions.aggregate(
-                avg_price=Avg('price_per_item')
-            )['avg_price']
+            item = self.calculate_item_details(item)
+            item_average_price = item.average_price
             total_price += (
                 item_average_price * item.quantity if item_average_price else 0
             )
-            item.average_price = item_average_price
-            commission = additions.aggregate(
-                commission=Avg('commission')
-            )['commission']
-            if item_average_price and commission:
-                item.spread = (
-                    (
-                        item.current_price * (
-                            (100 - commission) / 100
-                        )
-                    ) / item_average_price - 1
-                ) * 100
-            item.target = item.average_price * 1.495 if item.average_price else 0
-            item.save()
             items_with_average_price.append(item)
 
         average_price = total_price / total_quantity if total_quantity else 0
@@ -88,6 +97,7 @@ class IndexView(ListView):
         context['average_price'] = average_price
         context['items'] = items_with_average_price
         return context
+
 
 
 class ItemDetailView(DetailView):
