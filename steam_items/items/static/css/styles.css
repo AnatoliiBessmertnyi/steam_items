@@ -112,11 +112,11 @@ h1 {
 }
 
 .item-amount-details .item-part:not(:last-child) {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .item-amount-details .item-part .item-label {
-    margin-right: 55px;
+    margin-right: 60px;
 }
 
 .item-amount-details .item-part .item-value {
