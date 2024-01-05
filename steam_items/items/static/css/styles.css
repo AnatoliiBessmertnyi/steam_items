@@ -112,7 +112,7 @@ h1 {
 }
 
 .item-amount-details .item-part:not(:last-child) {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .item-amount-details .item-part .item-label {
@@ -151,16 +151,16 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-.item-spread {
-    color: #c6d4df;
-}
-
 .item-spread.positive {
     color: green;
 }
 
 .item-spread.negative {
     color: red;
+}
+
+.item-spread.zero {
+    color: yellow;
 }
 
 .item-label {

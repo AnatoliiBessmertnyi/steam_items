@@ -72,7 +72,7 @@
           <span class="item-value" id="target_price_{{ item.id }}">{{ item.target|floatformat:2 }}</span>
         </div>
 
-        <div class="item-part item-spread {% if item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}" style="width: 100px;">
+        <div class="item-part item-spread {% if item.current_price == 0 %}zero{% elif item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}" style="width: 110px;">
           <span class="item-label">Спред:</span>
           <span class="item-value">{{ item.spread|floatformat:2 }}%</span>
         </div>
