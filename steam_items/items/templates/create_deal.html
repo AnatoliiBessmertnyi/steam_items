@@ -10,7 +10,6 @@
         {{ field.label_tag }}
       {% endif %}
       {% if field.name == 'transaction_type' %}
-        <!-- Добавляем кнопки для выбора типа сделки -->
         <div class="transaction-type-buttons">
           <button type="button" id="buyButton" onclick="setTransactionType('BUY')">Купил</button>
           <button type="button" id="sellButton" onclick="setTransactionType('SELL')">Продал</button>
@@ -28,7 +27,10 @@
       {% endif %}
     </div>
   {% endfor %}
-  <button type="submit">Добавить</button>
+  <div style="display: flex; width: auto;">
+    <button type="submit" style="margin-right: 70px;">Добавить</button>
+    <button type="submit" name="add_another">Добавить еще</button>
+  </div>
 </form>
 
 <script>

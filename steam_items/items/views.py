@@ -117,7 +117,14 @@ class AddItemView(CreateView):
     template_name = 'create_deal.html'
 
     def form_valid(self, form):
-        """Переопределенный метод form_valid для обработки валидной формы."""
+        """Переопределенный метод form_valid для обработки валидной формы.
+        Этот метод вызывается, когда пользователь отправляет форму и данные
+        формы проходят валидацию. Метод обрабатывает данные формы, сохраняет
+        новую сделку и обновляет соответствующий предмет.
+
+        Перенаправляет на страницу деталей предмета после сохранения сделки.
+        Если была нажата кнопка "Добавить еще", происходит перенаправление на
+        страницу создания новой сделки для того же предмета."""
         addition = form.save()
         item = addition.item
         if addition.transaction_type == 'BUY':
@@ -131,7 +138,10 @@ class AddItemView(CreateView):
         if item.quantity == 0:
             ItemAddition.objects.filter(item=item).update(archived=True)
 
-        return redirect(reverse('item_detail', args=[item.id]))
+        if 'add_another' in self.request.POST:
+            return redirect(reverse('create_deal', args=[item.id]))
+        else:
+            return redirect(reverse('item_detail', args=[item.id]))
 
     def get_form_kwargs(self):
         """ Переопределенный метод get_form_kwargs для передачи item_id в

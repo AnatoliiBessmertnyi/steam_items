@@ -5,7 +5,7 @@ from .models import Item, ItemAddition
 
 
 class ItemAdditionForm(forms.ModelForm):
-    """Форма для добавления предметов."""
+    """Форма для добавления сделки."""
     date = forms.DateTimeField(
         input_formats=['%d.%m.%Y %H:%M'],
         widget=forms.DateTimeInput(format='%d.%m.%Y %H:%M'),
