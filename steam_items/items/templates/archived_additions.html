@@ -42,6 +42,7 @@
     </div>
   {% endfor %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 function toggleAdditions(itemId) {
   var additionsDiv = document.getElementById("item" + itemId);
@@ -57,13 +58,24 @@ function toggleAdditions(itemId) {
 window.onload = function() {
   var cookies = document.cookie.split(';');
   for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i].trim().split('=');
-    var additionsDiv = document.getElementById("item" + cookie[0]);
-    if (additionsDiv) {
-      additionsDiv.style.display = cookie[1];
-    }
+      var cookie = cookies[i].trim().split('=');
+      var additionsDiv = document.getElementById("item" + cookie[0]);
+      if (additionsDiv) {
+          additionsDiv.style.display = cookie[1];
+      }
   }
 }
+
+$(document).ready(function() {
+    $('.archive-item-name').each(function() {
+        var itemName = $(this).find(':contains("Inscribed")');
+        if (itemName.length > 0) {
+            itemName.css('color', '#CF6A30');
+            $(this).find('.item-image').css('border-color', '#CF6A30');
+        }
+    });
+});
+
 </script>
 
 {% endblock %}
