@@ -59,7 +59,21 @@ function saveCurrentPrice(itemId) {
     });
 }
 
+/**
+ * Обновляет цену предмета, делая POST-запрос к серверу, и обновляет стрелку, указывающую на изменение цены.
+ *
+ * @param {string} itemId - ID предмета, цену которого нужно обновить.
+ *
+ * При успешном обновлении цены этот метод обновляет стрелку, указывающую на изменение цены:
+ * - Если цена увеличилась, добавляется класс 'arrow-up'.
+ * - Если цена уменьшилась, добавляется класс 'arrow-down'.
+ * - Если цена не изменилась, классы 'arrow-up' и 'arrow-down' не добавляются.
+ *
+ * @throws {Error} Если запрос к серверу не удался, выбрасывается ошибка с сообщением 'Ошибка сети.'.
+ */
 function updatePrice(itemId) {
+    var oldPrice = parseFloat(document.getElementById('current_price_' + itemId).value);
+
     fetch('/update_price/' + itemId + '/', {
         method: 'POST',
         headers: {
@@ -71,14 +85,26 @@ function updatePrice(itemId) {
         })
     }).then(function(response) {
         if (response.ok) {
-            setTimeout(function() {
-                location.reload();
-            }, 2000);
+            return response.json();
         } else {
             throw new Error('Ошибка сети.');
         }
+    }).then(function(data) {
+        var currentPrice = data.new_price;
+        var arrowField = document.getElementById('arrow_' + itemId);
+        arrowField.className = 'item-label';
+        if (oldPrice !== undefined && data.price_direction === 'up') {
+            arrowField.classList.add('arrow-up');
+        } else if (oldPrice !== undefined && data.price_direction === 'down') {
+            arrowField.classList.add('arrow-down');
+        }
+
+        setTimeout(function() {
+            location.reload();
+        }, 2000);
     });
 }
+
 
 /**
  * Обрабатывает нажатие клавиши в поле ввода цены.

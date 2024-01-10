@@ -1,8 +1,10 @@
 import json
+from urllib.parse import unquote, urlparse
 
+import requests
 from django.db.models import Avg
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -12,8 +14,6 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 
 from .forms import ItemAdditionForm, ItemForm
 from .models import Item, ItemAddition, PriceHistory
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
 
 
 @csrf_exempt
@@ -59,7 +59,9 @@ class IndexView(ListView):
             avg_price=Avg('price_per_item')
         )['avg_price']
         item.average_price = item_average_price
-        item.total_price = item_average_price * item.quantity if item_average_price else 0
+        item.total_price = (
+            item_average_price * item.quantity if item_average_price else 0
+        )
         commission = additions.aggregate(
             commission=Avg('commission')
         )['commission']
@@ -101,13 +103,21 @@ class IndexView(ListView):
         return context
 
 
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-import requests
-from urllib.parse import urlparse, unquote
-
 def get_item_price(appid, market_hash_name):
+    """
+    Получает текущую цену предмета на Steam.
+
+    Эта функция делает GET-запрос к Steam API, чтобы получить информацию о цене
+    предмета. Она возвращает самую низкую текущую цену предмета.
+
+    @param appid: ID приложения в Steam.
+    @param market_hash_name: Уникальное имя предмета на рынке Steam.
+
+    @return: Самую низкую текущую цену предмета или None, если произошла ошибка.
+
+    @throws: Выводит сообщение об ошибке, если произошла ошибка при получении
+    цены предмета.
+    """
     try:
         url = f"https://steamcommunity.com/market/priceoverview/?appid={appid}&currency=5&market_hash_name={market_hash_name}"
         response = requests.get(url)
@@ -120,27 +130,72 @@ def get_item_price(appid, market_hash_name):
         print(f"Error occurred while getting item price: {e}")
         return None
 
+
 def extract_appid_and_market_hash_name(url):
+    """
+    Извлекает ID приложения и уникальное имя предмета из URL предмета на Steam.
+
+    Эта функция анализирует URL предмета и извлекает из него ID приложения и
+    уникальное имя предмета.
+
+    @param url: URL предмета на Steam.
+
+    @return: ID приложения и уникальное имя предмета или (None, None), если
+    произошла ошибка.
+
+    @throws: Выводит сообщение об ошибке на русском языке, если произошла
+    ошибка при извлечении ID приложения и уникального имени товара из URL.
+    """
     try:
         parsed_url = urlparse(url)
         appid, market_hash_name = parsed_url.path.split('/')[3:5]
         return appid, unquote(market_hash_name)
     except ValueError:
-        print(f"Error occurred while extracting appid and market_hash_name from url: {url}")
+        print(f"Произошла ошибка при извлечении appid и market_hash_name из URL: {url}")
         return None, None
 
+
 class UpdatePriceView(View):
+    """
+    Обработчик POST-запросов для обновления текущей цены товара.
+
+    Этот обработчик получает ID товара из URL, извлекает товар из базы данных,
+    обновляет текущую цену товара, сохраняет изменения в базе данных и
+    добавляет запись в историю цен.
+
+    После обновления цены этот обработчик возвращает JSON-ответ с новой ценой и
+    направлением изменения цены:
+    - Если цена увеличилась, 'price_direction' равно 'up'.
+    - Если цена уменьшилась, 'price_direction' равно 'down'.
+    - Если цена не изменилась, 'price_direction' равно 'no_change'.
+
+    Если товар не найден или произошла ошибка при обновлении цены, обработчик
+    перенаправляет пользователя на главную страницу.
+    """
     def post(self, request, *args, **kwargs):
         item = get_object_or_404(Item, id=kwargs['item_id'])
         appid, market_hash_name = extract_appid_and_market_hash_name(item.link)
+        old_price = item.current_price
+
         if appid and market_hash_name:
             new_price = get_item_price(appid, market_hash_name)
             if new_price is not None:
                 item.current_price = new_price
                 item.save()
                 PriceHistory.objects.create(item=item, price=new_price)
+                if new_price > old_price:
+                    price_direction = 'up'
+                elif new_price < old_price:
+                    price_direction = 'down'
+                else:
+                    price_direction = 'no_change'
+                return JsonResponse(
+                    {
+                        'new_price': new_price,
+                        'price_direction': price_direction
+                    }
+                )
         return HttpResponseRedirect(reverse('index'))
-
 
 
 class ItemDetailView(DetailView):
