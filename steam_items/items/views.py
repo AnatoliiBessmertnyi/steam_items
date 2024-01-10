@@ -136,8 +136,9 @@ class UpdatePriceView(View):
         if appid and market_hash_name:
             new_price = get_item_price(appid, market_hash_name)
             if new_price is not None:
-                item.new_current_price = new_price
+                item.current_price = new_price
                 item.save()
+                PriceHistory.objects.create(item=item, price=new_price)
         return HttpResponseRedirect(reverse('index'))
 
 

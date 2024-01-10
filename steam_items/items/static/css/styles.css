@@ -370,3 +370,16 @@ form button {
     border-color: #2A3F5F;
     box-shadow: 0 0 10px #2A3F5F;
 }
+
+.refresh-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: inherit;
+}
+
+.refresh-button .icon {
+    font-size: 30px;
+    color: #888;
+    font-weight: bold;
+}

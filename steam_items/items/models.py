@@ -12,7 +12,6 @@ class Item(models.Model):
     quantity = models.IntegerField(default=0)
     total_price = models.FloatField(default=0.0)
     current_price = models.FloatField(default=0.0)
-    new_current_price = models.FloatField(default=0.0)
     spread = models.FloatField(default=0.0)
     last_deal_time = models.DateTimeField(null=True, blank=True)
     target = models.FloatField(default=0.0)

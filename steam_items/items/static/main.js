@@ -59,6 +59,27 @@ function saveCurrentPrice(itemId) {
     });
 }
 
+function updatePrice(itemId) {
+    fetch('/update_price/' + itemId + '/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            'item_id': itemId
+        })
+    }).then(function(response) {
+        if (response.ok) {
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        } else {
+            throw new Error('Ошибка сети.');
+        }
+    });
+}
+
 /**
  * Обрабатывает нажатие клавиши в поле ввода цены.
  *

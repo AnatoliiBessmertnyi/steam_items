@@ -59,26 +59,20 @@
           </div>
       </div>
 
-        <div class="item-part item-current-price">
-          <a href="{% url 'price_history' item.id %}">
-            <span class="item-label" id="arrow_{{ item.id }}">Текущая цена:</span>
-          </a>
-          <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
-          <input type="hidden" id="old_current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}">
-        </div>
+      <div class="item-part item-current-price">
+        <a href="{% url 'price_history' item.id %}">
+          <span class="item-label" id="arrow_{{ item.id }}">Текущая цена:</span>
+        </a>
+        <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
+        <input type="hidden" id="old_current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}">
+        <button type="button" class="refresh-button" onclick="updatePrice('{{ item.id }}')">
+          <span class="icon">&#8635;</span>
+        </button>
+      </div>
 
         <div class="item-part item-target-price" style="width: 100px;">
           <span class="item-label">Цель:</span>
           <span class="item-value" id="target_price_{{ item.id }}">{{ item.target|floatformat:2 }}</span>
-        </div>
-
-        <div class="item-part item-new-current-price">
-          <span class="item-label">Новая текущая цена:</span>
-          <form action="{% url 'update_price' item.id %}" method="post">
-            {% csrf_token %}
-            <span class="item-value">{{ item.new_current_price|floatformat:2 }}</span>
-            <input type="submit" value="Обновить">
-          </form>
         </div>
 
         <div class="item-part item-spread {% if item.current_price == 0 %}zero{% elif item.spread > 0 %}positive{% elif item.spread < 0 %}negative{% endif %}" style="width: 110px;">
