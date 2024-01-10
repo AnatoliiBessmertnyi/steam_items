@@ -12,6 +12,7 @@ class Item(models.Model):
     quantity = models.IntegerField(default=0)
     total_price = models.FloatField(default=0.0)
     current_price = models.FloatField(default=0.0)
+    new_current_price = models.FloatField(default=0.0)
     spread = models.FloatField(default=0.0)
     last_deal_time = models.DateTimeField(null=True, blank=True)
     target = models.FloatField(default=0.0)
@@ -24,7 +25,7 @@ class Item(models.Model):
 
 
 class ItemAddition(models.Model):
-    """Модель добавления предмета. Представляет собой сделку с предметом."""
+    """Модель добавления сделки с предметом."""
     TRANSACTION_TYPES = [
         ('BUY', 'Купил'),
         ('SELL', 'Продал'),

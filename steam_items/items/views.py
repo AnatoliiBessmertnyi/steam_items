@@ -12,6 +12,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 
 from .forms import ItemAdditionForm, ItemForm
 from .models import Item, ItemAddition, PriceHistory
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 
 
 @csrf_exempt
@@ -97,6 +99,47 @@ class IndexView(ListView):
         context['average_price'] = average_price
         context['items'] = items_with_average_price
         return context
+
+
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+import requests
+from urllib.parse import urlparse, unquote
+
+def get_item_price(appid, market_hash_name):
+    try:
+        url = f"https://steamcommunity.com/market/priceoverview/?appid={appid}&currency=5&market_hash_name={market_hash_name}"
+        response = requests.get(url)
+        data = response.json()
+        if isinstance(data, dict) and data['success']:
+            price = data['lowest_price']
+            price = price.replace(' pуб.', '').replace(',', '.')
+            return float(price)
+    except Exception as e:
+        print(f"Error occurred while getting item price: {e}")
+        return None
+
+def extract_appid_and_market_hash_name(url):
+    try:
+        parsed_url = urlparse(url)
+        appid, market_hash_name = parsed_url.path.split('/')[3:5]
+        return appid, unquote(market_hash_name)
+    except ValueError:
+        print(f"Error occurred while extracting appid and market_hash_name from url: {url}")
+        return None, None
+
+class UpdatePriceView(View):
+    def post(self, request, *args, **kwargs):
+        item = get_object_or_404(Item, id=kwargs['item_id'])
+        appid, market_hash_name = extract_appid_and_market_hash_name(item.link)
+        if appid and market_hash_name:
+            new_price = get_item_price(appid, market_hash_name)
+            if new_price is not None:
+                item.new_current_price = new_price
+                item.save()
+        return HttpResponseRedirect(reverse('index'))
+
 
 
 class ItemDetailView(DetailView):

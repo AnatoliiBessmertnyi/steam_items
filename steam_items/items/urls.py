@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .views import UpdatePriceView
 
 
 urlpatterns = [
@@ -8,6 +9,7 @@ urlpatterns = [
     path('item_detail/<int:pk>/', views.ItemDetailView.as_view(), name='item_detail'),
     path('create_deal/', views.AddItemView.as_view(), name='create_deal'),
     path('create_deal/<int:item_id>/', views.AddItemView.as_view(), name='create_deal'),
+    path('update_price/<int:item_id>/', UpdatePriceView.as_view(), name='update_price'),
     path('create_item/', views.CreateItemView.as_view(), name='create_item'),
     path('edit_deal/<int:pk>/', views.EditAdditionView.as_view(),
          name='edit_deal'),
