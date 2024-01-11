@@ -2,7 +2,7 @@ import json
 from urllib.parse import unquote, urlparse
 
 import requests
-from django.db.models import Avg
+from django.db.models import Avg, F
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -45,7 +45,27 @@ class IndexView(ListView):
 
     def get_queryset(self):
         """Получает список товаров, количество которых больше 0."""
-        return Item.objects.filter(quantity__gt=0)
+        queryset = Item.objects.filter(quantity__gt=0)
+
+        # Получаем параметры фильтрации из GET запроса
+        spread_order = self.request.GET.get('spread_order')
+        total_price_order = self.request.GET.get('total_price_order')
+
+        # Применяем фильтрацию
+        if spread_order:
+            queryset = queryset.order_by(
+                F('spread').desc(nulls_last=True)
+            ) if spread_order == 'desc' else queryset.order_by(
+                F('spread').asc(nulls_last=True)
+            )
+        if total_price_order:
+            queryset = queryset.order_by(
+                F('total_price').desc(nulls_last=True)
+            ) if total_price_order == 'desc' else queryset.order_by(
+                F('total_price').asc(nulls_last=True)
+            )
+
+        return queryset
 
     def calculate_item_details(self, item):
         """Вычисляет детали для каждого отдельного предмета.
