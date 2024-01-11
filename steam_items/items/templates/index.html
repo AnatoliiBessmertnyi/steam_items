@@ -4,6 +4,17 @@
 <script src="{% static 'main.js' %}"></script>
   <h1>Инвентарь</h1>
 
+  <div class="sorting-controls">
+    <label for="sort_order">Сортировать по:</label>
+    <select id="sort_order" onchange="location = this.value;">
+      <option value="?">без сортировки</option>
+      <option value="?spread_order=asc">возрастанию спреда</option>
+      <option value="?spread_order=desc">убыванию спреда</option>
+      <option value="?total_price_order=asc">возрастанию общей стоимости</option>
+      <option value="?total_price_order=desc">убыванию общей стоимости</option>
+    </select>
+  </div>
+
   <div class="inventory-item">
     <div class="item-left">
       <h2>Общая информация</h2>

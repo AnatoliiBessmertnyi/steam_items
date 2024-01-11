@@ -395,3 +395,20 @@ form button {
     color: #888;
     font-weight: bold;
 }
+
+.sorting-controls {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-left: 4px;
+}
+
+.sorting-controls label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 7px;
+}
+
+.sorting-controls select {
+    font-size: 13px;
+}

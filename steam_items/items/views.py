@@ -44,20 +44,20 @@ class IndexView(ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        """Получает список товаров, количество которых больше 0."""
+        """Получает список товаров, количество которых больше 0, и применяет
+        фильтрацию по спреду и общей стоимости, если они указаны в параметрах
+        GET запроса."""
         queryset = Item.objects.filter(quantity__gt=0)
-
-        # Получаем параметры фильтрации из GET запроса
         spread_order = self.request.GET.get('spread_order')
         total_price_order = self.request.GET.get('total_price_order')
 
-        # Применяем фильтрацию
         if spread_order:
             queryset = queryset.order_by(
                 F('spread').desc(nulls_last=True)
             ) if spread_order == 'desc' else queryset.order_by(
                 F('spread').asc(nulls_last=True)
             )
+
         if total_price_order:
             queryset = queryset.order_by(
                 F('total_price').desc(nulls_last=True)
