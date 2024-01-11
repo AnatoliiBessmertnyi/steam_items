@@ -23,6 +23,10 @@
         <span class="item-label">Стоимость:</span>
         <span class="item-value">{{ total_price|floatformat:2 }}</span>
       </div>
+      <button type="button" class="refresh-button" onclick="updateAllPrices()" title="Обновить все цены">
+        <span class="icon">↻</span>
+      </button>
+    
     </div>
   </div>
 
@@ -61,11 +65,11 @@
 
       <div class="item-part item-current-price">
         <a href="{% url 'price_history' item.id %}">
-          <span class="item-label" id="arrow_{{ item.id }}">Текущая цена:</span>
+          <span class="item-label" id="arrow_{{ item.id }}" title="График">Текущая цена:</span>
         </a>
         <input type="number" id="current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}" onchange="saveCurrentPrice('{{ item.id }}')" onkeypress="handleKeyPress(event, '{{ item.id }}')">
         <input type="hidden" id="old_current_price_{{ item.id }}" value="{{ item.current_price|floatformat:2 }}">
-        <button type="button" class="refresh-button" onclick="updatePrice('{{ item.id }}')">
+        <button type="button" class="refresh-button" onclick="updatePrice('{{ item.id }}')" title="Обновить">
           <span class="icon">&#8635;</span>
         </button>
       </div>
@@ -84,6 +88,8 @@
   {% endfor %}
 
 <script>
+  var itemIds = [{% for item in items %} '{{ item.id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+
   window.onload = function() {
       var elements = document.getElementsByTagName('h2');
       for(var i = 0; i < elements.length; i++) {
