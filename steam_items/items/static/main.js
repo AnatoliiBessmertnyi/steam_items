@@ -60,7 +60,8 @@ function saveCurrentPrice(itemId) {
 }
 
 /**
- * Обновляет цену предмета, делая POST-запрос к серверу, и обновляет стрелку, указывающую на изменение цены.
+ * Обновляет текущую цену предмета, делая POST-запрос к серверу, и обновляет стрелку, указывающую на изменение цены.
+ * После обновления цены страница перезагружается через 2 секунды.
  *
  * @param {string} itemId - ID предмета, цену которого нужно обновить.
  *
@@ -68,6 +69,10 @@ function saveCurrentPrice(itemId) {
  * - Если цена увеличилась, добавляется класс 'arrow-up'.
  * - Если цена уменьшилась, добавляется класс 'arrow-down'.
  * - Если цена не изменилась, классы 'arrow-up' и 'arrow-down' не добавляются.
+ *
+ * Затем обновляет значение текущей цены в DOM.
+ *
+ * Наконец, устанавливает таймер для перезагрузки страницы через 2 секунды.
  *
  * @throws {Error} Если запрос к серверу не удался, выбрасывается ошибка с сообщением 'Ошибка сети.'.
  */
@@ -99,9 +104,13 @@ function updatePrice(itemId) {
             arrowField.classList.add('arrow-down');
         }
 
-        setTimeout(function() {
-            location.reload();
-        }, 2000);
+        document.getElementById('current_price_' + itemId).value = currentPrice;
+
+        if (oldPrice !== currentPrice) {
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
     });
 }
 
