@@ -248,32 +248,32 @@ form button {
 }
 
 #buyButton, #sellButton {
-    width: 90px; /* Уменьшаем ширину кнопки */
-    text-align: center; /* Выравниваем текст по центру */
-    border: none; /* Убираем рамки */
-    color: white; /* Цвет текста */
-    font-family: Arial, sans-serif; /* Шрифт */
+    width: 90px;
+    text-align: center;
+    border: none;
+    color: white;
+    font-family: Arial, sans-serif;
     height: 32px;
     margin-right: 10px;
     
 }
   
 #buyButton {
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
 }
 
 #buyButton:hover, #buyButton.selected {
-    background-color: #388E3C; /* Darker green */
-    box-shadow: 0 0 10px #4CAF50; /* Добавляем зеленую рамку вокруг кнопки */
+    background-color: #388E3C;
+    box-shadow: 0 0 10px #4CAF50;
 }
 
 #sellButton {
-    background-color: #f44336; /* Red */
+    background-color: #f44336;
 }
 
 #sellButton:hover, #sellButton.selected {
-    background-color: #d32f2f; /* Darker red */
-    box-shadow: 0 0 10px #f44336; /* Добавляем красную рамку вокруг кнопки */
+    background-color: #d32f2f;
+    box-shadow: 0 0 10px #f44336;
 }
 
 /* Название предмета в архиве */
@@ -407,8 +407,31 @@ form button {
     font-size: 13px;
     font-weight: bold;
     margin-right: 7px;
+    font-family: Arial, sans-serif;
+    color: #c6d4df;
 }
 
 .sorting-controls select {
     font-size: 13px;
+    border-radius: 5px;
+    background-color: #16202D;
+    font-family: Arial, sans-serif;
+    color: #c6d4df;
 }
+
+.transaction-type.BUY {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    padding: 2px 6px;
+    box-shadow: 1px 1px 3px rgba(0, 100, 0, 0.6); /* Добавлено */
+}
+.transaction-type.SELL {
+    background-color: #f44336;
+    color: white;
+    border-radius: 5px;
+    padding: 2px 6px;
+    box-shadow: 1px 1px 3px rgba(150, 0, 0, 0.6); /* Добавлено */
+}
+
+

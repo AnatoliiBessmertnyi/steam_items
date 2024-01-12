@@ -10,7 +10,10 @@
   <div class="deal-container">
     {% for addition in additions %}
       <div class="deal">
-        <h2 class="deal-name">{{ addition.get_transaction_type_display }} {{ addition.date|date:"d.m.y H:i:s" }}</h2>
+        <h2 class="deal-name">
+          <span class="transaction-type {{ addition.transaction_type }}">{{ addition.get_transaction_type_display }}</span>
+          <span class="transaction-date">{{ addition.date|date:"d.m.y H:i:s" }}</span>
+        </h2>
         <div class="deal-details">
           <p><span class="item-label">Количество:</span> <span class="item-value">{{ addition.quantity }}</span></p>
           <p><span class="item-label">Цена за штуку:</span> <span class="item-value">{{ addition.price_per_item }}</span></p>
