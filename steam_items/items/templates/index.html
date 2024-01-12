@@ -99,26 +99,48 @@
   {% endfor %}
 
 <script>
-  var itemIds = [{% for item in items %} '{{ item.id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+var itemIds = [{% for item in items %} '{{ item.id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
 
-  window.onload = function() {
-      var elements = document.getElementsByTagName('h2');
-      for(var i = 0; i < elements.length; i++) {
-          if(elements[i].textContent.startsWith('Inscribed')) {
-              elements[i].style.color = '#CF6A30';
-              var parent = elements[i].parentElement;
-              while(parent) {
-                  if(parent.className.includes('inventory-item')) {
-                      var itemImage = parent.getElementsByClassName('item-image')[0];
-                      if(itemImage) {
-                          itemImage.style.borderColor = '#CF6A30';
-                      }
-                      break;
+/**
+ * Функция выполняется при загрузке страницы. Она изменяет цвет элементов с классом 'Inscribed',
+ * устанавливает выбранное значение сортировки в выпадающем списке на основе сохраненного значения в localStorage
+ * или сбрасывает его на 'Без сортировки', если текущий URL не содержит параметра сортировки.
+ */
+window.onload = function() {
+  var elements = document.getElementsByTagName('h2');
+  for(var i = 0; i < elements.length; i++) {
+      if(elements[i].textContent.startsWith('Inscribed')) {
+          elements[i].style.color = '#CF6A30';
+          var parent = elements[i].parentElement;
+          while(parent) {
+              if(parent.className.includes('inventory-item')) {
+                  var itemImage = parent.getElementsByClassName('item-image')[0];
+                  if(itemImage) {
+                      itemImage.style.borderColor = '#CF6A30';
                   }
-                  parent = parent.parentElement;
+                  break;
               }
+              parent = parent.parentElement;
           }
       }
   }
+
+  var sortOrder = localStorage.getItem('sort_order');
+  if (sortOrder && window.location.search.indexOf(sortOrder) > -1) {
+      document.getElementById('sort_order').value = sortOrder;
+  } else {
+      document.getElementById('sort_order').value = '?';
+  }
+}
+
+/**
+ * Функция вызывается при изменении значения выпадающего списка сортировки.
+ * Она сохраняет выбранное значение в localStorage и перезагружает страницу с новым параметром сортировки.
+ */
+
+document.getElementById('sort_order').onchange = function() {
+  localStorage.setItem('sort_order', this.value);
+  location = this.value;
+}
 </script>
 {% endblock %}
