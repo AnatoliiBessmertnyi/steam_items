@@ -16,6 +16,10 @@ class ItemAdditionForm(forms.ModelForm):
         widget=forms.HiddenInput(),
         required=False,
     )
+    price_per_item = forms.FloatField(
+        widget=forms.NumberInput(attrs={'step': 'any'}),
+        label='Цена за единицу',
+    )
 
     class Meta:
         model = ItemAddition
