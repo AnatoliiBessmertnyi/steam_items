@@ -94,6 +94,9 @@
   buyButton.addEventListener('click', function() { setTransactionType('BUY'); });
   sellButton.addEventListener('click', function() { setTransactionType('SELL'); });
   setTransactionType('BUY')
+
+  // Код для установки фокуса на поле "Цена за единицу"
+  document.getElementById('id_price_per_item').focus();
 </script>
 
 {% endblock %}
