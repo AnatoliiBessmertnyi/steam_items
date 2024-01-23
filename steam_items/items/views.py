@@ -375,7 +375,10 @@ class ArchiveAdditionView(ItemUpdateMixin, RedirectView):
         addition.save()
         item = addition.item
         self.update_item(addition, item)
-        return reverse('item_detail', kwargs={'pk': addition.item.pk})
+        if item.quantity == 0:
+            return reverse('index')
+        else:
+            return reverse('item_detail', kwargs={'pk': addition.item.pk})
 
 
 class ArchivedAdditionsView(ListView):
