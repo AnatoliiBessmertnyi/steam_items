@@ -257,7 +257,7 @@ form button {
     margin-right: 10px;
     
 }
-  
+
 #buyButton {
     background-color: #4CAF50;
 }
@@ -285,6 +285,15 @@ form button {
 }
 
 /* Детали сделок */
+.button-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.item-quantity {
+    margin-left: auto;
+}
+
 .add-deal-button {
     background: linear-gradient(to left, #1B2838, #16202D);
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
@@ -302,13 +311,12 @@ form button {
     margin-top: 17px; 
 }
 
-
 .deal-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
-  
+
 .deal {
     box-sizing: border-box;
     position: relative;

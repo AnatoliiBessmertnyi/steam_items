@@ -2,11 +2,14 @@
 
 {% block content %}
   <div class="deal-title">
-    <h1>{{ item.name }}</h1>
+    <h1>{{ item.name }} </h1>
   </div>
   <div class="button-wrapper">
     <a href="{% url 'create_deal' item.id %}" class="add-deal-button">Добавить сделку по данному предмету</a>
+    <a class="item-quantity">Осталось предметов: {{ item.quantity }}</a>
   </div>
+
+    
   <div class="deal-container">
     {% for addition in additions %}
       <div class="deal">
