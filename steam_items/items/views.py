@@ -144,7 +144,7 @@ def get_item_price(appid, market_hash_name):
         data = response.json()
         if isinstance(data, dict) and data['success']:
             price = data['lowest_price']
-            price = price.replace(' pуб.', '').replace(',', '.')
+            price = price.replace(' руб.', '').replace(',', '.')
             return float(price)
     except Exception as e:
         print(f"Error occurred while getting item price: {e}")
@@ -199,6 +199,7 @@ class UpdatePriceView(View):
 
         if appid and market_hash_name:
             new_price = get_item_price(appid, market_hash_name)
+            print(new_price)
             if new_price is not None:
                 item.current_price = new_price
                 item.save()
