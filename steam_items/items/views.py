@@ -199,7 +199,6 @@ class UpdatePriceView(View):
 
         if appid and market_hash_name:
             new_price = get_item_price(appid, market_hash_name)
-            print(new_price)
             if new_price is not None:
                 item.current_price = new_price
                 item.save()
