@@ -52,6 +52,7 @@
             </div>
             {% endif %}
             <h2>{{ item.name }}</h2>
+            <button onclick="sellAllQuantity({{ item.id }})">Продать все</button>
           </div>
         </a>
       </div>
@@ -142,5 +143,26 @@ document.getElementById('sort_order').onchange = function() {
   localStorage.setItem('sort_order', this.value);
   location = this.value;
 }
+
+function sellAllQuantity(itemId) {
+  fetch('/sell_all_quantity/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ 'item_id': itemId })
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.status === 'ok') {
+          alert(data.message);
+          location.reload();
+      } else {
+          alert(data.message);
+      }
+  });
+}
+
 </script>
 {% endblock %}

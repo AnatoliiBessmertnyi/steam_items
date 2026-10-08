@@ -1,11 +1,14 @@
 import json
-from urllib.parse import unquote, urlparse
+import re
+import time
+from urllib.parse import urlparse, parse_qs, unquote
 
 import requests
 from django.db.models import Avg, F
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -32,6 +35,34 @@ def save_current_price(request):
     item.save()
     PriceHistory.objects.create(item=item, price=data['current_price'])
     return JsonResponse({'status': 'ok'})
+
+
+@csrf_exempt
+@require_POST
+def sell_all_quantity(request):
+    """Обработчик для продажи всех единиц конкретного товара."""
+    data = json.loads(request.body)
+    item = Item.objects.get(id=data['item_id'])
+
+    if item.quantity > 0:
+        total_sale_price = item.quantity * item.current_price
+        # Создаем запись о продаже в модели ItemAddition
+        ItemAddition.objects.create(
+            item=item,
+            transaction_type='SELL',
+            quantity=item.quantity,
+            price_per_item=item.current_price,
+            total=total_sale_price,
+            date=timezone.now(),
+            archived=False
+        )
+        # Обнуляем количество предмета после продажи
+        item.quantity = 0
+        item.save()
+
+        return JsonResponse({'status': 'ok', 'message': 'Все единицы товара проданы.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Товар уже распродан.'})
 
 
 class IndexView(ListView):
@@ -125,97 +156,129 @@ class IndexView(ListView):
 
 def get_item_price(appid, market_hash_name):
     """
-    Получает текущую цену предмета на Steam.
-
-    Эта функция делает GET-запрос к Steam API, чтобы получить информацию о цене
-    предмета. Она возвращает самую низкую текущую цену предмета.
-
-    @param appid: ID приложения в Steam.
-    @param market_hash_name: Уникальное имя предмета на рынке Steam.
-
-    @return: Самую низкую текущую цену предмета или None, если произошла ошибка.
-
-    @throws: Выводит сообщение об ошибке, если произошла ошибка при получении
-    цены предмета.
+    Получает текущую цену предмета на Steam с обработкой лимитов и пустых ответов.
+    Возвращает кортеж: (цена_или_None, статус_ошибки)
     """
     try:
-        url = f"https://steamcommunity.com/market/priceoverview/?appid={appid}&currency=5&market_hash_name={market_hash_name}"
-        response = requests.get(url)
+        url = "https://steamcommunity.com/market/priceoverview/"
+        params = {
+            'appid': appid,
+            'currency': 5,  # 5 = RUB
+            'market_hash_name': market_hash_name
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/plain, */*'
+        }
+        
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        
+        # 1. Обработка блокировки за частые запросы (429)
+        if response.status_code == 429:
+            print(f"Steam вернул 429 Too Many Requests (превышен лимит).")
+            return None, 'rate_limit'
+            
+        # 2. Steam иногда возвращает просто строку "null" при ошибках
+        if not response.text or response.text.strip() == 'null':
+            print(f"Steam вернул пустой ответ (null) для {market_hash_name}.")
+            return None, 'empty'
+
+        # 3. Парсинг JSON
         data = response.json()
-        if isinstance(data, dict) and data['success']:
-            price = data['lowest_price']
-            price = price.replace(' руб.', '').replace(',', '.')
-            return float(price)
+        
+        if isinstance(data, dict) and data.get('success'):
+            lowest_price = data.get('lowest_price')
+            if lowest_price:
+                # Очищаем строку цены: "1 234,56 руб." -> "1234.56"
+                clean_price = lowest_price.replace(' руб.', '').replace(' ', '').replace(',', '.')
+                return float(clean_price), 'success'
+        else:
+            print(f"Steam API вернул success=False для {market_hash_name}. Ответ: {data}")
+            return None, 'not_found'
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Сетевая ошибка при получении цены: {e}")
+        return None, 'network_error'
     except Exception as e:
-        print(f"Error occurred while getting item price: {e}")
-        return None
+        print(f"Неожиданная ошибка при парсинге цены: {e}")
+        return None, 'unknown_error'
 
 
 def extract_appid_and_market_hash_name(url):
     """
-    Извлекает ID приложения и уникальное имя предмета из URL предмета на Steam.
-
-    Эта функция анализирует URL предмета и извлекает из него ID приложения и
-    уникальное имя предмета.
-
-    @param url: URL предмета на Steam.
-
-    @return: ID приложения и уникальное имя предмета или (None, None), если
-    произошла ошибка.
-
-    @throws: Выводит сообщение об ошибке на русском языке, если произошла
-    ошибка при извлечении ID приложения и уникального имени товара из URL.
+    Надежно извлекает appid и market_hash_name из различных форматов ссылок Steam.
     """
+    if not url:
+        return None, None
+        
     try:
-        parsed_url = urlparse(url)
-        appid, market_hash_name = parsed_url.path.split('/')[3:5]
-        return appid, unquote(market_hash_name)
-    except ValueError:
-        print(f"Произошла ошибка при извлечении appid и market_hash_name из URL: {url}")
+        # Вариант 1: Стандартная ссылка на торговую площадку
+        # https://steamcommunity.com/market/listings/730/AK-47%20%7C%20Redline
+        match = re.search(r'/market/listings/(\d+)/(.+)', url)
+        if match:
+            return match.group(1), unquote(match.group(2).strip('/'))
+        
+        # Вариант 2: Ссылка уже содержит параметры priceoverview
+        # https://steamcommunity.com/market/priceoverview/?appid=730&market_hash_name=...
+        parsed = urlparse(url)
+        if 'appid' in parsed.query:
+            qs = parse_qs(parsed.query)
+            appid = qs.get('appid', [None])[0]
+            market_hash_name = qs.get('market_hash_name', [None])[0]
+            if appid and market_hash_name:
+                return appid, unquote(market_hash_name)
+                
+        return None, None
+    except Exception as e:
+        print(f"Ошибка при извлечении appid и market_hash_name из URL '{url}': {e}")
         return None, None
 
 
 class UpdatePriceView(View):
-    """
-    Обработчик POST-запросов для обновления текущей цены товара.
-
-    Этот обработчик получает ID товара из URL, извлекает товар из базы данных,
-    обновляет текущую цену товара, сохраняет изменения в базе данных и
-    добавляет запись в историю цен.
-
-    После обновления цены этот обработчик возвращает JSON-ответ с новой ценой и
-    направлением изменения цены:
-    - Если цена увеличилась, 'price_direction' равно 'up'.
-    - Если цена уменьшилась, 'price_direction' равно 'down'.
-    - Если цена не изменилась, 'price_direction' равно 'no_change'.
-
-    Если товар не найден или произошла ошибка при обновлении цены, обработчик
-    перенаправляет пользователя на главную страницу.
-    """
     def post(self, request, *args, **kwargs):
         item = get_object_or_404(Item, id=kwargs['item_id'])
         appid, market_hash_name = extract_appid_and_market_hash_name(item.link)
         old_price = item.current_price
 
-        if appid and market_hash_name:
-            new_price = get_item_price(appid, market_hash_name)
-            if new_price is not None:
-                item.current_price = new_price
-                item.save()
-                PriceHistory.objects.create(item=item, price=new_price)
-                if new_price > old_price:
-                    price_direction = 'up'
-                elif new_price < old_price:
-                    price_direction = 'down'
-                else:
-                    price_direction = 'no_change'
-                return JsonResponse(
-                    {
-                        'new_price': new_price,
-                        'price_direction': price_direction
-                    }
-                )
-        return HttpResponseRedirect(reverse('index'))
+        if not appid or not market_hash_name:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Неверный формат ссылки для предмета "{item.name}".'
+            }, status=400)
+
+        new_price, status = get_item_price(appid, market_hash_name)
+        
+        if new_price is not None:
+            item.current_price = new_price
+            item.save()
+            PriceHistory.objects.create(item=item, price=new_price)
+            
+            if new_price > (old_price or 0):
+                price_direction = 'up'
+            elif new_price < (old_price or 0):
+                price_direction = 'down'
+            else:
+                price_direction = 'no_change'
+                
+            return JsonResponse({
+                'status': 'ok',
+                'new_price': new_price,
+                'price_direction': price_direction
+            })
+        
+        # Обработка ошибок для фронтенда
+        error_messages = {
+            'rate_limit': 'Steam временно заблокировал запросы из-за частого обновления (ошибка 429). Подождите 10-15 минут.',
+            'empty': 'Steam вернул пустой ответ. Возможно, предмет снят с продажи.',
+            'not_found': 'Предмет не найден на торговой площадке Steam.',
+            'network_error': 'Ошибка сети при обращении к Steam.',
+            'unknown_error': 'Произошла непредвиденная ошибка при получении цены.'
+        }
+        
+        return JsonResponse({
+            'status': 'error',
+            'message': error_messages.get(status, 'Неизвестная ошибка')
+        }, status=502 if status != 'rate_limit' else 429)
 
 
 class ItemDetailView(DetailView):

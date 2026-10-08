@@ -4,7 +4,7 @@ from .views import (
     AddItemView, ArchiveAdditionView, ArchivedAdditionsView, CreateItemView,
     DeleteAdditionView, EditAdditionView, IndexView, ItemDetailView,
     PriceHistoryJsonView, PriceHistoryView, UnarchiveAdditionView,
-    UpdatePriceView, save_current_price
+    UpdatePriceView, save_current_price, sell_all_quantity
 )
 
 urlpatterns = [
@@ -27,4 +27,5 @@ urlpatterns = [
          name='price_history'),
     path('price_history_json/<int:item_id>/', PriceHistoryJsonView.as_view(),
          name='price_history_json'),
+    path('sell_all_quantity/', sell_all_quantity, name='sell_all_quantity'),
 ]
